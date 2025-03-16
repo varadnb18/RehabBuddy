@@ -11,6 +11,8 @@ function SplitingWindow() {
   const startTimeRef = useRef(Date.now());
   const totalStartTimeRef = useRef(Date.now());
   const screenStartTimeRef = useRef(Date.now());
+
+  const pointsAccumulationRef = useRef(0);
   const [sizes, setSizes] = useState(["50%", "50%"]);
 
   const handleSizeChange = (newSizes) => {
@@ -27,6 +29,15 @@ function SplitingWindow() {
       const durationInMinutes = Math.floor(durationInMs / 60000);
       if (durationInMinutes === 0) return;
 
+      pointsAccumulationRef.current += durationInMinutes;
+      let pointsToAward = 0;
+      if (pointsAccumulationRef.current >= 5) {
+        const blocks = Math.floor(pointsAccumulationRef.current / 5);
+        pointsToAward = blocks * 10;
+
+        pointsAccumulationRef.current -= blocks * 5;
+      }
+
       const today = new Date().toISOString().split("T")[0];
 
       try {
@@ -36,8 +47,7 @@ function SplitingWindow() {
         if (userDoc.exists()) {
           const userData = userDoc.data();
           const currentExerciseTime = userData.exerciseTime?.[name] || {};
-          const updatedMinutes =
-            (currentExerciseTime[today] || 0) + durationInMinutes;
+          const updatedMinutes = (currentExerciseTime[today] || 0) + durationInMinutes;
 
           const updatedExerciseTime = {
             ...userData.exerciseTime,
@@ -49,32 +59,39 @@ function SplitingWindow() {
 
           const totalTimeInMs = Date.now() - totalStartTimeRef.current;
           const totalTimeInMinutes = Math.floor(totalTimeInMs / 60000);
-
           const updatedTotalTime = userData.totalTime || 0;
-          const updatedTotalTimeInMinutes =
-            updatedTotalTime + totalTimeInMinutes;
+          const updatedTotalTimeInMinutes = updatedTotalTime + totalTimeInMinutes;
 
           const screenTimeInMs = Date.now() - screenStartTimeRef.current;
           const screenTimeInMinutes = Math.floor(screenTimeInMs / 60000);
-
           const updatedScreenTime = userData.screenTime || {};
-          const updatedScreenTimeForToday =
-            (updatedScreenTime[today] || 0) + screenTimeInMinutes;
-
+          const updatedScreenTimeForToday = (updatedScreenTime[today] || 0) + screenTimeInMinutes;
           const updatedScreenTimeData = {
             ...updatedScreenTime,
             [today]: updatedScreenTimeForToday,
           };
 
-          await updateDoc(userRef, {
+          const updateData = {
             exerciseTime: updatedExerciseTime,
             totalTime: updatedTotalTimeInMinutes,
             screenTime: updatedScreenTimeData,
-          });
+          };
 
-          console.log(
-            "Exercise time, total time, and screen time updated in Firestore!"
-          );
+          if (pointsToAward > 0) {
+            const newTotalPoints = (userData.points || 0) + pointsToAward;
+            updateData.points = newTotalPoints;
+            console.log(`Awarded ${pointsToAward} points. Total points: ${newTotalPoints}`);
+
+            const userBadges = userData.badges || [];
+            if (newTotalPoints >= 30 && !userBadges.includes("First Milestone")) {
+              userBadges.push("First Milestone");
+              updateData.badges = userBadges;
+              console.log("User awarded a badge: First Milestone");
+            }
+          }
+
+          await updateDoc(userRef, updateData);
+          console.log("Exercise time, total time, screen time, and points updated in Firestore!");
 
           startTimeRef.current = Date.now();
           totalStartTimeRef.current = Date.now();

@@ -29,7 +29,7 @@ const ProfilePopup = ({ handleLogout }) => {
         <Box
           position="absolute"
           top="110%"
-          right="60%"
+          right="0%"
           width={{ base: "90%", md: "16rem" }} // Adjust width for smaller screens
           height="auto"
           bg="white"
