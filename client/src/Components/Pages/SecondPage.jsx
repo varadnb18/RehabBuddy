@@ -47,7 +47,7 @@ function SecondPage() {
       </div>
       <div className="w-[100%] flex justify-center">
         <div className="w-[79%] h-[22.4rem] mt-8">
-          <div className=" flex justify-between">
+          {/* <div className=" flex justify-between">
             <div className="flex items-center">
               <ul className="flex items-center justify-between w-[27rem] ml-10 font-[600] text-[#08656e] ">
                 {["Classes", "Live", "Programs", "Playlists"].map((item) => (
@@ -69,15 +69,15 @@ function SecondPage() {
             <div>
               <SearchBar />
             </div>
-          </div>
+          </div> */}
 
-          <div className="mt-9 ml-10 flex justify-start gap-6">
+          {/* <div className="mt-9 ml-10 flex justify-start gap-6">
             <FilterDropdown title="Teachers" />
             <FilterDropdown title="Style" />
             <FilterDropdown title="Duration" />
             <FilterDropdown title="Level" />
             <FilterDropdown title="Specific use" />
-          </div>
+          </div> */}
 
           <div className="mt-10">
             <Container />
