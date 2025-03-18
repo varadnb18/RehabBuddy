@@ -28,11 +28,11 @@ function Title() {
 
   return (
     <div className="title flex justify-around h-[4.7rem] items-center pt-7 w-full">
-      <div>
+      <div className="ml-[-20px]">
         <img
           src={websitelogo}
           alt="EliteFit Logo"
-          className="logo max-h-[150px] aspect-[3/2] object-contain"
+          className="logo max-h-[160px] aspect-[3/2] object-contain"
         />
       </div>
 

@@ -4,19 +4,23 @@ import { auth, db } from "../FireBase/FireBase";
 import StreakCalendar from "../Calendar/StreakCalendar";
 import YogaScreenTimeChart from "../UI/YogaScreenTimeChart";
 import ExerciseTimeChart from "../UI/ExerciseTimeChart";
-import PersonalInfo from "../UI/PersonalInfo";
+// import PersonalInfo from "../UI/PersonalInfo";
 import ChatBotIcon from "./ChatBot";
 import Title from "../UI/Title";
+import Badges from "../UI/Badges";
 
-const StatBox = ({ number, label, showFire }) => (
+
+const StatBox = ({ number, label, showFire, emoji }) => (
   <div className="w-32 h-32 border border-gray-300 rounded flex flex-col items-center justify-center text-center">
     <span className="text-2xl font-bold inline-flex items-center">
       {number}
+      {emoji && <span className="ml-0.5">{emoji}</span>}
       {showFire && <span className="ml-0.5">🔥</span>}
     </span>
     <span className="text-sm">{label}</span>
   </div>
 );
+
 
 function ProfilePage() {
   const [userData, setUserData] = useState(null);
@@ -152,7 +156,7 @@ function ProfilePage() {
   return (
     <div>
       <Title />
-      <div className="grid grid-cols-3" style={{ gridTemplateColumns: "45% 32% 23%" }}>
+      <div className="grid grid-cols-3" style={{ gridTemplateColumns: "43% 32% 25%" }}>
         <div className="flex flex-col items-center w-full ml-10">
           <div className="p-8 w-[90%] pb-5 pt-5 flex flex-col items-start">
             <h1 className="text-3xl font-bold text-left text-[#333] mb-3 leading-normal">
@@ -170,12 +174,13 @@ function ProfilePage() {
           </div>
 
           <div className="p-4">
-            <div className="flex gap-6 ml-5">
-              <StatBox number={stats.totalSessions} label="Total Sessions 🧘" />
-              <StatBox number={stats.totalUsers} label="Total Users " />
-              <StatBox number={userData?.longestStreak || 0} label="Longest streak" showFire={true} />
-              <StatBox number={userData?.currentStreak || 0} label="Current streak" showFire={true} />
-            </div>
+          <div className="flex gap-6 ml-5">
+  <StatBox number={stats.totalSessions} label="Total Sessions" emoji="🧘🏻‍♂️" />
+  <StatBox number={stats.totalUsers} label="Total Users" emoji="🙋🏼‍♂️" />
+  <StatBox number={userData?.longestStreak || 0} label="Longest streak" showFire={true} />
+  <StatBox number={userData?.currentStreak || 0} label="Current streak" showFire={true} />
+</div>
+
           </div>
         </div>
 
@@ -188,7 +193,10 @@ function ProfilePage() {
           </div>
         </div>
 
-        <PersonalInfo userData={userData} loading={loading} />
+        {/* <PersonalInfo userData={userData} loading={loading} /> */}
+        <div className="w-[90%]">
+        <Badges/>
+        </div>
       </div>
 
       {/* Chatbot Icon */}

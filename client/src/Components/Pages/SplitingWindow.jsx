@@ -102,9 +102,9 @@ function SplitingWindow() {
             updateData.points = newTotalPoints;
 
             const badgeImages = {
-              "First Milestone": "https://www.gstatic.com/webp/gallery/1.webp",
-              "Second Milestone": "https://www.gstatic.com/webp/gallery/2.webp",
-              "Third Milestone": "https://www.gstatic.com/webp/gallery/3.webp",
+              "First Milestone": "https://tejaskasture.github.io/pose-classification-model/1_final.webp",
+              "Second Milestone": "https://tejaskasture.github.io/pose-classification-model/2_final.webp",
+              "Third Milestone": "https://tejaskasture.github.io/pose-classification-model/3_final.webp",
             };
 
             const userBadges = userData.badges || [];

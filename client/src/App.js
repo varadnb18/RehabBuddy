@@ -10,7 +10,7 @@ import SplitingWindow from "./Components/Pages/SplitingWindow";
 import FrontPage from "./Components/Pages/FrontPage";
 import ProtectedRoute from "./ProtectedRoute";
 import ChatPage from "./Components/UI/ChatPage";
-import Badges from "./Components/Pages/Badges";
+
 
 const isAuthenticated = () => {
   return localStorage.getItem("authToken") !== null;
@@ -25,8 +25,6 @@ function App() {
         path="/Login-Page"
         element={isAuthenticated() ? <Navigate to="/" /> : <LoginPage />}
       />
-
-       <Route path="/badges" element={<Badges />} />
 
       {/* Protected Routes */}
       <Route
