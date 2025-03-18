@@ -9,10 +9,12 @@
     max-height: 8.75rem; /* 140px */
     transform: translateX(-0.5rem);
   }
+
   .navbar {
     transform: translateX(4.375rem); /* 70px */
     gap: 3.75rem; /* 60px */
   }
+
   .signin {
     padding: 0.6875rem 1.5625rem; /* 11px 25px */
   }
@@ -56,7 +58,6 @@
 
 @media (max-width: 75rem) {
   /* 1200px */
-
   .logo {
     max-height: 7.1875rem; /* 115px */
     transform: translateX(-0rem);
@@ -139,8 +140,7 @@
   .signin {
     padding: 0.4rem 2rem; /* 5px 25px */
     font-size: 0.7rem;
-    transform: translateX(5rem);
-    /* 80px */
+    transform: translateX(5rem); /* 80px */
   }
 }
 
@@ -160,9 +160,7 @@
     transform: translateX(-2.5rem);
   }
   .signin {
-    transform: translateX(4rem);
-
-    /* 80px */
+    transform: translateX(4rem); /* 80px */
   }
 }
 
@@ -173,8 +171,17 @@
     transform: translateX(-2.5rem);
   }
   .signin {
-    transform: translateX(4rem);
-
-    /* 80px */
+    transform: translateX(4rem); /* 80px */
   }
 }
+
+/* New media query for small screens */
+@media (max-width: 35rem) {
+  /* For screens less than 400px */
+  .signin {
+    font-size: 0.7rem; /* 11px */
+    padding: 0.3125rem 1.25rem; /* 5px 20px */
+    transform: translateX(2rem); /* adjust position */
+  }
+}
+

@@ -40,6 +40,7 @@ function Container() {
       style={{
         gridTemplateColumns: "repeat(3, 1fr)",
         placeItems: "center",
+        justifyContent:"center"
       }}
     >
       {loading

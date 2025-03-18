@@ -1,0 +1,114 @@
+/* SecondPage.css */
+
+/* Base styles for mobile-first (default) */
+.second-page-container {
+  background-color: #d6e5e3;
+  width: 100%;
+  height: 30rem;
+  min-height: 28rem;
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 7rem;
+}
+
+.header-title {
+  width: 100%;
+  height: 7rem;
+}
+
+.main-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 22rem;
+}
+
+.main-content h1 {
+  color: #08656e;
+  font-size: 2rem; /* Default for mobile */
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.main-content p {
+  font-size: 1rem; /* Default for mobile */
+  line-height: 1.6;
+  padding: 0 1rem;
+}
+
+.second-page-inner-container {
+  width: 79%;
+  height: 22.4rem;
+  margin-top: 2rem;
+}
+
+.container-wrapper {
+  margin-top: 2.5rem;
+}
+
+.chatbot-icon-wrapper {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+}
+
+/* Tablet and Desktop Styles */
+@media (min-width: 640px) {
+  .main-content h1 {
+    font-size: 2.5rem; /* Tablet */
+  }
+
+  .main-content p {
+    font-size: 1.125rem;
+    padding: 0 2rem;
+  }
+
+  .second-page-inner-container {
+    width: 80%;
+    height: 25rem;
+  }
+
+  .container-wrapper {
+    margin-top: 3rem;
+  }
+
+  .header-title h1 {
+    font-size: 2.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .main-content h1 {
+    font-size: 3rem; /* Desktop */
+  }
+
+  .main-content p {
+    font-size: 1.25rem;
+    padding: 0 3rem;
+  }
+
+  .second-page-inner-container {
+    width: 70%;
+    height: 30rem;
+  }
+
+  .container-wrapper {
+    margin-top: 4rem;
+  }
+
+  .header-title h1 {
+    font-size: 3rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .main-content h1 {
+    font-size: 3.5rem; /* Larger desktop */
+  }
+}
