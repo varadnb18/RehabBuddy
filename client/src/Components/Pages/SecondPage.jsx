@@ -22,7 +22,7 @@ function SecondPage() {
           className="flex items-center"
           style={{ width: "100%", height: "7rem" }}
         >
-          <div className="ml-7" style={{ width: "100%", height: "7rem" }}>
+          <div  style={{ width: "100%", height: "7rem" }}>
             <Title />
           </div>
         </div>

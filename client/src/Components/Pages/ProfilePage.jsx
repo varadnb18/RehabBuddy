@@ -4,9 +4,9 @@ import { auth, db } from "../FireBase/FireBase";
 import StreakCalendar from "../Calendar/StreakCalendar";
 import YogaScreenTimeChart from "../UI/YogaScreenTimeChart";
 import ExerciseTimeChart from "../UI/ExerciseTimeChart";
-import ProfileTitle from "../UI/ProfileTitle";
 import PersonalInfo from "../UI/PersonalInfo";
 import ChatBotIcon from "./ChatBot";
+import Title from "../UI/Title";
 
 const StatBox = ({ number, label }) => (
   <div className="w-32 h-32 border border-gray-300 rounded flex flex-col items-center justify-center text-center">
@@ -71,7 +71,7 @@ function ProfilePage() {
 
   return (
     <div>
-      <ProfileTitle />
+      <Title />
 
       <div
         className="grid grid-cols-3"

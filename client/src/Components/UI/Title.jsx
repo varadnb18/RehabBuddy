@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { ChevronDownIcon, Box } from "@chakra-ui/icons";
+import { ChevronDownIcon, Box, Button } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
 import ProfilePopup from "./ProfilePopup";
-import logo from "../../Images/logo.webp";
 import websitelogo from "../../Images/website-logo.png";
 import "./Title.css";
 
@@ -23,7 +22,7 @@ function Title() {
   const menuItems = [
     { name: "Home", path: "/" },
     { name: "Programs", path: "/programs" },
-    { name: "Resources", path: "/" },
+    { name: "Profile", path: "/Profile" },
     { name: "ContactUs", path: "/" },
   ];
 
@@ -53,7 +52,10 @@ function Title() {
       </div>
 
       {authToken ? (
-        <ProfilePopup handleLogout={handleLogout} />
+        // <ProfilePopup handleLogout={handleLogout} />
+        <button className="signin px-[1.5rem] py-[0.6rem] text-base font-bold text-[#0d2436] border-[1px] border-[#6CB33F] rounded-full bg-white hover:bg-green-50 transition" onClick={handleLogout}>
+          Logout
+        </button>
       ) : (
         <Link to="/Login-Page">
           <button className="signin px-[1.5rem] py-[0.6rem] text-base font-bold text-[#0d2436] border-[1px] border-[#6CB33F] rounded-full bg-white hover:bg-green-50 transition">

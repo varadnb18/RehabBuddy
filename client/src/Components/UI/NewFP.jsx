@@ -27,9 +27,9 @@ function NewFP() {
               Boost Productivity with AI for Effective Compliance,
               <br /> Improved Adherence, and Impactful Results
             </p>
-            <button className="demo mt-4 text-white px-6 py-4 rounded-2xl text-lg font-semibold">
+            {/* <button className="demo mt-4 text-white px-6 py-4 rounded-2xl text-lg font-semibold">
               Book A Demo
-            </button>
+            </button> */}
           </div>
         </div>
 
