@@ -17,16 +17,17 @@ function NewFP() {
         {/* Left Section */}
         <div className="flex justify-center items-center w-full px-4">
           <div className="area flex flex-col items-start max-w-[40rem] text-left">
-            <h1 className="text-[42px] md:text-[52px] font-medium leading-[1.1]">
-              <span className="A">A</span>n{" "}
-              <span className="word ">AI-driven</span> <br />
-              virtual trainer for <br />
-              better health and fitness
-            </h1>
-            <p className="text-gray-500 text-lg mt-4">
-              Boost Productivity with AI for Effective Compliance,
-              <br /> Improved Adherence, and Impactful Results
-            </p>
+          <h1 className="text-[40px] md:text-[45px] font-medium leading-[1.1]">
+          <span className="A">R</span>ehabBuddy{" "}
+          <span className="word">AI-Powered</span> Rehabilitation Assistant
+          Guided recovery with real-time feedback for faster healing.
+        </h1>
+
+        <p className="text-gray-500 text-lg mt-4">
+        Boost productivity with AI for effective compliance, improved adherence, and        
+        impactful results.
+        </p>
+
             {/* <button className="demo mt-4 text-white px-6 py-4 rounded-2xl text-lg font-semibold">
               Book A Demo
             </button> */}
