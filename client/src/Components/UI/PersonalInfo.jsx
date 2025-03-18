@@ -55,35 +55,6 @@ const PersonalInfo = ({ userData, loading }) => {
         </div>
       </section>
 
-      <section>
-        <h3 className="text-xl font-semibold text-purple-600 flex items-center mb-2">
-          <HeartPulse className="mr-2 text-purple-600" /> Health & Medical
-        </h3>
-        <div className="grid grid-cols-1 gap-y-2 text-gray-700">
-          {loading || showLoader ? (
-            <SkeletonLoader />
-          ) : (
-            <>
-              <div className="flex gap-x-[42px]">
-                <p className="font-semibold text-gray-900">Medical History:</p>
-                <p>{userData?.medicalHistory || "None"}</p>
-              </div>
-              <div className="flex gap-x-2">
-                <p className="font-semibold text-gray-900">
-                  Current Medications:
-                </p>
-                <p>{userData?.medications || "None"}</p>
-              </div>
-              <div className="flex gap-x-3">
-                <p className="font-semibold text-gray-900">
-                  Rehabilitation Goals:
-                </p>
-                <p>{userData?.goals || "N/A"}</p>
-              </div>
-            </>
-          )}
-        </div>
-      </section>
     </div>
   );
 };

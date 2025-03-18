@@ -3,6 +3,7 @@ import { ChevronDownIcon, Box } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
 import ProfilePopup from "./ProfilePopup";
 import logo from "../../Images/logo.webp";
+import websitelogo from "../../Images/website-logo.png";
 import "./Title.css";
 
 function Title() {
@@ -15,6 +16,7 @@ function Title() {
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
+    localStorage.removeItem("pointsAccumulation");
     setAuthToken(null);
   };
 
@@ -29,7 +31,7 @@ function Title() {
     <div className="title flex justify-around h-[4.7rem] items-center pt-7 w-full">
       <div>
         <img
-          src={logo}
+          src={websitelogo}
           alt="EliteFit Logo"
           className="logo max-h-[150px] aspect-[3/2] object-contain"
         />
