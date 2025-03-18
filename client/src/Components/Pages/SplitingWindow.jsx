@@ -4,6 +4,7 @@ import SplitPane from "split-pane-react";
 import "split-pane-react/esm/themes/default.css";
 import { auth, db } from "../FireBase/FireBase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
+import WebCam from "./WebCam";
 
 function SplitingWindow() {
   const { name } = useParams();
@@ -120,7 +121,9 @@ function SplitingWindow() {
         onChange={handleSizeChange}
         style={{ height: "100%" }}
       >
-        <div style={{ background: "#ddd", height: "100%" }}>Pane 1</div>
+        <div style={{ background: "#ddd", height: "100%" }}>
+          <WebCam />
+        </div>
         <div style={{ background: "#a1a5a9", height: "100%" }}>Pane 2</div>
       </SplitPane>
     </div>
