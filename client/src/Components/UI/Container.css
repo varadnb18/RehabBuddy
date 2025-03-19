@@ -3,8 +3,7 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
   margin: 0 auto; /* Center the container */
-  max-width: 80rem; /* Restrict the width for better alignment */
-  place-items: center; /* Center items within grid */
+  max-width: 80rem; /* Restrict the width for better alignment *//* Center items within grid */
   justify-content: center; /* Ensure grid aligns to center */
 }
 

@@ -17,6 +17,7 @@ function Title() {
     localStorage.removeItem("authToken");
     localStorage.removeItem("pointsAccumulation");
     setAuthToken(null);
+    window.location.reload();
   };
 
   const menuItems = [
