@@ -37,14 +37,15 @@ function NewFP() {
         {/* Right Section */}
         <div className=" flex justify-center items-center w-full">
           <div className="video rounded-xl overflow-hidden shadow-lg w-full max-w-[630px]">
-            <iframe
-              src="https://www.youtube.com/embed/3TJ_sOgMZd8?autoplay=1&controls=0&enablejsapi=1&rel=0&loop=1&modestbranding=1&showsearch=0&showinfo=0&autohide=1&playsinline=1&cc_load_policy=0"
-              title="Trainer Video"
-              allow="autoplay; encrypted-media"
-              allowFullScreen
-              className="w-full h-[300px] md:h-[530px] object-cover"
-              muted
-            />
+          <iframe
+  src="https://www.youtube.com/embed/H7AUbAZTXKM?si=QRTSmnB3_-AiQmxH"
+  title="Trainer Video"
+  allow="autoplay; encrypted-media"
+  allowFullScreen
+  className="w-full h-[300px] md:h-[530px] object-cover"
+  muted
+/>
+
           </div>
         </div>
       </div>

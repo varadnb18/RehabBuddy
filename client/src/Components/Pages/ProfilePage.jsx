@@ -10,6 +10,7 @@ import Title from "../UI/Title";
 import Badges from "../UI/Badges";
 
 
+
 const StatBox = ({ number, label, showFire, emoji }) => (
   <div className="w-32 h-32 border border-gray-300 rounded flex flex-col items-center justify-center text-center">
     <span className="text-2xl font-bold inline-flex items-center">
@@ -175,16 +176,18 @@ function ProfilePage() {
 
           <div className="p-4">
           <div className="flex gap-6 ml-5">
-  <StatBox number={stats.totalSessions} label="Total Sessions" emoji="🧘🏻‍♂️" />
-  <StatBox number={stats.totalUsers} label="Total Users" emoji="🙋🏼‍♂️" />
-  <StatBox number={userData?.longestStreak || 0} label="Longest streak" showFire={true} />
-  <StatBox number={userData?.currentStreak || 0} label="Current streak" showFire={true} />
+            <StatBox number={stats.totalSessions} label="Total Sessions" emoji="🧘🏻‍♂️" />
+            <StatBox number={stats.totalUsers} label="Total Users" emoji="🙋🏼‍♂️" />
+            <StatBox number={userData?.longestStreak || 0} label="Longest streak" showFire={true} />
+            <StatBox number={userData?.currentStreak || 0} label="Current streak" showFire={true} />
 </div>
 
           </div>
         </div>
 
         <div className="flex flex-col items-center w-full">
+          
+
           <div className="w-[320px] pb-5">
             <ExerciseTimeChart />
           </div>
@@ -195,11 +198,12 @@ function ProfilePage() {
 
         {/* <PersonalInfo userData={userData} loading={loading} /> */}
         <div className="w-[90%]">
-        <Badges/>
+        <Badges userData={userData} loading={loading}/>
         </div>
       </div>
 
       {/* Chatbot Icon */}
+      
       <ChatBotIcon />
     </div>
   );

@@ -10,15 +10,21 @@ import {
   VStack,
   CircularProgress,
   CircularProgressLabel,
-  Spacer
+  Spacer,
+  Button
 } from "@chakra-ui/react";
+import PersonalInfo from "./PersonalInfo";
 
-function Badges() {
+const Badges = ({ userData }) => {
   const [badges, setBadges] = useState([]);
   const [userId, setUserId] = useState(null);
   const [loading, setLoading] = useState(true);
   // Assume the user document stores points along with other stats.
   const [userStats, setUserStats] = useState({ streak: 0, caloriesBurned: 0, points: 0 });
+  const [showPersonalInfo, setShowPersonalInfo] = useState(false);
+  // 'step' indicates which view is active:
+  // true = progress view, false = personal info view.
+  const [step, setStep] = useState(true);
 
   // Corrected URL keys for badge mapping.
   const badgeMapping = {
@@ -141,51 +147,101 @@ function Badges() {
         ))}
       </Flex>
 
-      {pendingMilestones.length > 0 && (
-        <>
-          <Flex align="center" mt={8} mb={2}>
-            <Text fontSize="lg" fontWeight="bold">Progress Toward Next Milestone</Text>
-            <Spacer />
-          </Flex>
-          <VStack spacing={4}>
-            {pendingMilestones.map((milestone, index) => {
-              const progress = Math.floor((milestone.current / milestone.threshold) * 100);
-              return (
-                <Flex
-                  key={index}
-                  align="center"
-                  p={3}
-                  borderRadius="md"
-                  bg="gray.50"
-                  boxShadow="sm"
-                  w="100%"
-                >
-                  <Box textAlign="left">
-                    <Text fontWeight="medium" fontSize="xs">{milestone.name}</Text>
-                    <Text fontSize="xs" color="gray.500">
-                      {milestone.description} ({milestone.current}/{milestone.threshold})
-                    </Text>
-                  </Box>
-                  <Spacer />
-                  <CircularProgress
-                    value={progress}
-                    color="orange.400"
-                    trackColor="gray.200"
-                    size="50px"
-                    thickness="10px"
+      {/* Toggle Button to switch views */}
+      <Button
+        onClick={() => {
+          setShowPersonalInfo(prev => !prev);
+          setStep(!step);
+        }}
+        colorScheme="orange"
+        mt={8}
+      >
+        {showPersonalInfo ? "View Progress" : "View Personal Info"}
+      </Button>
+
+      {/* Navigation Bar using Chakra UI with onClick switching */}
+      <Box display="flex" justifyContent="space-between" alignItems="center" width="90%" mx="auto" mt={4}>
+        <Box
+          flex="1"
+          height="6px"
+          borderRadius="full"
+          bg={step ? "teal.400" : "gray.300"}
+          mr={1}
+          transition="background-color 0.3s ease"
+          onClick={() => {
+            setStep(true);
+            setShowPersonalInfo(false);
+          }}
+          cursor="pointer"
+        />
+        <Box
+          flex="1"
+          height="6px"
+          borderRadius="full"
+          bg={!step ? "teal.400" : "gray.300"}
+          ml={1}
+          transition="background-color 0.3s ease"
+          onClick={() => {
+            setStep(false);
+            setShowPersonalInfo(true);
+          }}
+          cursor="pointer"
+        />
+      </Box>
+
+      {showPersonalInfo ? (
+        // Display user's personal info when toggled on
+        <PersonalInfo userData={userData} loading={loading} />
+      ) : (
+        // Otherwise, display the progress toward next milestone (if any pending)
+        pendingMilestones.length > 0 && (
+          <>
+            <Flex align="center" mt={8} mb={2}>
+              <Text fontSize="lg" fontWeight="bold" textAlign="center" w="100%">
+                Progress Toward Next Milestone
+              </Text>
+              <Spacer />
+            </Flex>
+            <VStack spacing={4}>
+              {pendingMilestones.map((milestone, index) => {
+                const progress = Math.floor((milestone.current / milestone.threshold) * 100);
+                return (
+                  <Flex
+                    key={index}
+                    align="center"
+                    p={3}
+                    borderRadius="md"
+                    bg="gray.50"
+                    boxShadow="sm"
+                    w="100%"
                   >
-                    <CircularProgressLabel fontSize="xs">
-                      {progress}%
-                    </CircularProgressLabel>
-                  </CircularProgress>
-                </Flex>
-              );
-            })}
-          </VStack>
-        </>
+                    <Box textAlign="left">
+                      <Text fontWeight="medium" fontSize="xs">{milestone.name}</Text>
+                      <Text fontSize="xs" color="gray.500">
+                        {milestone.description} ({milestone.current}/{milestone.threshold})
+                      </Text>
+                    </Box>
+                    <Spacer />
+                    <CircularProgress
+                      value={progress}
+                      color="orange.400"
+                      trackColor="gray.200"
+                      size="50px"
+                      thickness="10px"
+                    >
+                      <CircularProgressLabel fontSize="xs">
+                        {progress}%
+                      </CircularProgressLabel>
+                    </CircularProgress>
+                  </Flex>
+                );
+              })}
+            </VStack>
+          </>
+        )
       )}
     </Box>
   );
-}
+};
 
 export default Badges;

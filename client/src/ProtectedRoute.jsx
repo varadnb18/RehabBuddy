@@ -1,28 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Navigate } from "react-router-dom";
+import toast, { Toaster } from "react-hot-toast";
 
 const ProtectedRoute = ({ children }) => {
   const authToken = localStorage.getItem("authToken");
-  const [showPopup, setShowPopup] = useState(false);
-  const [redirect, setRedirect] = useState(false);
+  const hasShownToast = useRef(false);
 
   useEffect(() => {
-    if (!authToken) {
-      setShowPopup(true);
-      setTimeout(() => setShowPopup(false), 4000);
-      setTimeout(() => setRedirect(true), 1000);
+    if (!authToken && !hasShownToast.current) {
+      toast.error("Login First", { duration: 3000 });
+      hasShownToast.current = true;
     }
   }, [authToken]);
 
-  if (redirect) {
-    return <Navigate to="/Login-Page" replace />;
-  }
-
   if (!authToken) {
-    return <>{showPopup && alert("Login First")}</>;
+    return <Navigate to="/" replace />;
   }
 
-  return children;
+  return (
+    <>
+      {/* Consider placing <Toaster /> once in your app's root (e.g., App.js) */}
+      <Toaster position="top-right" />
+      {children}
+    </>
+  );
 };
 
 export default ProtectedRoute;

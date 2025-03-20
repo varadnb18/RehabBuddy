@@ -5,6 +5,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../FireBase/FireBase";
 import { doc, setDoc } from "firebase/firestore";
 import { useSignup } from "./SignupContext";
+import toast from "react-hot-toast";
 
 const SignUpNext = ({ handleFocus, handleBlur, toggleForm, setPage }) => {
   const navigate = useNavigate();
@@ -37,9 +38,11 @@ const SignUpNext = ({ handleFocus, handleBlur, toggleForm, setPage }) => {
       !weight
     ) {
       console.log("⚠️ Missing fields detected!");
-      alert("Please fill in all fields correctly.");
+      toast.error("Please fill in all fields correctly.");
       return;
     }
+
+    const toastId = toast.loading("Signing up...");
 
     try {
       const userCredential = await createUserWithEmailAndPassword(
@@ -74,12 +77,12 @@ const SignUpNext = ({ handleFocus, handleBlur, toggleForm, setPage }) => {
         heightWeight: "",
       });
 
-      alert("SignUp Successful");
+      toast.success("Sign-up Successful!", { id: toastId, duration: 3000 });
 
-      navigate("/");
+      setTimeout(() => navigate("/"), 1500);
     } catch (err) {
       console.log("🔥 Error during sign-up:", err.message);
-      alert("Sign-up failed: " + err.message);
+      toast.error("Sign-up failed: " + err.message, { id: toastId });
     }
   }
 

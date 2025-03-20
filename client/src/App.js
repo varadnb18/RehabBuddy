@@ -10,6 +10,7 @@ import SplitingWindow from "./Components/Pages/SplitingWindow";
 import FrontPage from "./Components/Pages/FrontPage";
 import ProtectedRoute from "./ProtectedRoute";
 import ChatPage from "./Components/UI/ChatPage";
+import toast, { Toaster } from "react-hot-toast";
 
 
 const isAuthenticated = () => {
@@ -18,6 +19,8 @@ const isAuthenticated = () => {
 
 function App() {
   return (
+    <>
+    <Toaster/>
     <Routes>
       <Route path="/" element={<FrontPage />} />
 
@@ -64,6 +67,7 @@ function App() {
 
       <Route path="*" element={<NotFound />} />
     </Routes>
+    </>
   );
 }
 

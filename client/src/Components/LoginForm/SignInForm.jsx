@@ -5,10 +5,12 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../FireBase/FireBase";
 import { updateStreak } from "../Calendar/updateStreak";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const SignInForm = ({ handleFocus, handleBlur, toggleForm }) => {
   const navigate = useNavigate();
   const [signin, setSignin] = useState({ email: "", password: "" });
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -20,6 +22,11 @@ const SignInForm = ({ handleFocus, handleBlur, toggleForm }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const toastId = toast.loading('Signing in...');
+
+    // Prevent duplicate submissions
+    if (submitting) return;
+    setSubmitting(true);
 
     try {
       const userCredential = await signInWithEmailAndPassword(
@@ -29,16 +36,22 @@ const SignInForm = ({ handleFocus, handleBlur, toggleForm }) => {
       );
       const user = userCredential.user;
 
+      // Show toast for successful login
+      toast.success("Login Successful!", { id: toastId, duration: 3000 });
+      
       await updateStreak();
 
       const token = await user.getIdToken();
       localStorage.setItem("authToken", token);
 
       setSignin({ email: "", password: "" });
-      navigate("/");
+      
+      // Delay navigation to allow toast visibility
+      setTimeout(() => navigate("/"), 1500);
     } catch (err) {
       console.log(err.message);
-      alert("Invalid Credentials");
+      toast.error("Invalid Credentials", {id : toastId});
+      setSubmitting(false);
     }
   };
 
