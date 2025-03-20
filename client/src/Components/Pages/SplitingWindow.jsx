@@ -13,13 +13,24 @@ function SplitingWindow() {
   const startTimeRef = useRef(Date.now());
   const totalStartTimeRef = useRef(Date.now());
   const screenStartTimeRef = useRef(Date.now());
+  const videoRef = useRef(null);
 
   const pointsAccumulationRef = useRef(0);
-  const [sizes, setSizes] = useState(["50%", "50%"]);
+  const [sizes, setSizes] = useState(["70%", "30%"]);
 
   const handleSizeChange = (newSizes) => {
     setSizes(newSizes);
   };
+
+  const videoURLs = {
+    chair: "https://v5-coders-tfjs-models.s3.ap-south-1.amazonaws.com/finalchair.mp4",
+    tree: "https://v5-coders-tfjs-models.s3.ap-south-1.amazonaws.com/treefinal.mp4",
+    shoulder_stand: "https://v5-coders-tfjs-models.s3.ap-south-1.amazonaws.com/sholderfinal.mp4",
+    plank: "https://v5-coders-tfjs-models.s3.ap-south-1.amazonaws.com/plankfinal.mp4",
+  };
+
+  // 🔹 Get the corresponding video URL for the selected exercise
+  const videoSrc = videoURLs[name] || "";
 
   useEffect(() => {
     const storedAccumulation = localStorage.getItem("pointsAccumulation");
@@ -151,18 +162,48 @@ function SplitingWindow() {
 
   return (
     <div style={{ height: "100vh", width: "100vw" }}>
-    <SplitPane
-      split="vertical"
-      sizes={sizes}
-      onChange={handleSizeChange}
-      style={{ height: "100%" }}
-    >
-      <div style={{ background: "#ddd", height: "100%" }}>
-        <WebCam />
-      </div>
-      <div style={{ background: "#a1a5a9", height: "100%" }}>Pane 2</div>
-    </SplitPane>
-  </div>
+      <SplitPane
+        split="vertical"
+        sizes={sizes} // 🔹 70% Webcam, 30% Video
+        onChange={handleSizeChange}
+        style={{ height: "100%" }}
+      >
+        {/* Left Pane: Webcam */}
+        <div style={{ background: "#ddd", height: "100%" }}>
+          <WebCam />
+        </div>
+
+        {/* Right Pane: Exercise Video */}
+        <div
+          style={{
+            background: "#a1a5a9",
+            height: "100%",
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <h1>{name.charAt(0).toUpperCase() + name.slice(1)}</h1>
+          <div style={{ width: "100%", height: "calc(100% - 60px)", position: "relative" }}>
+            {videoSrc ? (
+              <video
+                ref={videoRef}
+                style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                controls
+                loop // 🔹 Loop the video
+              >
+                <source src={videoSrc} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <p>Video not available</p>
+            )}
+          </div>
+        </div>
+      </SplitPane>
+    </div>
   );
 }
 

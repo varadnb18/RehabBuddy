@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
 import * as tf from '@tensorflow/tfjs';
-import toast from "react-hot-toast";
 import "./WebCam.css"
+import { useParams } from 'react-router-dom';
 
 function WebCam() {
+  const {name}=useParams();
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  const [selectedPose, setSelectedPose] = useState('tree');
+  const [selectedPose, setSelectedPose] = useState(name);
   const [accuracy, setAccuracy] = useState(0);
   const [isCorrectPose, setIsCorrectPose] = useState(false);
   const [timer, setTimer] = useState(0);
@@ -20,20 +21,22 @@ function WebCam() {
   const poseClassifier = useRef(null);
   const tfModel = useRef(null);
 
-
+  // Updated pose classes to include tree and plank
+  // Option 1: Update pose classes to match the model's 8 classes
   const poseClasses = ['chair', 'cobra', 'downdog', 'shoulder_stand', 'tree', 'plank'];
 
 
   const normalizeLandmarks = (landmarks) => {
- 
+    // Create a fixed-length array (66 elements for x,y of 33 landmarks)
     const normalizedLandmarks = new Array(66).fill(0);
     
-
+    // Make sure we're getting valid landmarks
     if (!landmarks || landmarks.length === 0) {
       console.warn('No landmarks provided to normalize');
       return normalizedLandmarks;
     }
     
+    // Calculate bounding box for normalization
     let minX = 1, minY = 1, maxX = 0, maxY = 0;
     for (let i = 0; i < landmarks.length; i++) {
       if (landmarks[i] && landmarks[i].visibility > 0.5) {
@@ -48,7 +51,7 @@ function WebCam() {
     const height = maxY - minY;
     const scale = Math.max(width, height);
     
-
+    // Extract only x and y coordinates and normalize to range [0,1]
     for (let i = 0; i < landmarks.length && i < 33; i++) {
       if (landmarks[i] && typeof landmarks[i].x === 'number' && typeof landmarks[i].y === 'number') {
         // Normalize coordinates to be centered and scaled
@@ -71,6 +74,7 @@ function WebCam() {
   };
 
   useEffect(() => {
+    
     // Initialize MediaPipe and TensorFlow model
     const initMediaPipe = async () => {
       try {
@@ -210,7 +214,7 @@ function WebCam() {
             })
             .catch(error => {
               console.error('Error starting camera:', error);
-              toast.error("Error accessing camera. Please allow camera access.", { duration: 3000 });
+              setMessageStatus('Error accessing camera. Please allow camera access.');
             });
         }
         
@@ -220,7 +224,6 @@ function WebCam() {
       } catch (error) {
         console.error('Error initializing MediaPipe:', error);
         setMessageStatus('Failed to initialize pose detection. Please refresh the page.');
-        toast.error("Failed to initialize pose detection. Please refresh the page.", { duration: 3000 });
       }
     };
 
@@ -682,6 +685,8 @@ function WebCam() {
     [23, 25], [25, 27], // left leg
     [24, 26], [26, 28]  // right leg
   ];
+
+  console.log("Name: ",name);
 
   return (
     <div className="app-container" style={{height:"50rem"}}>

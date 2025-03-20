@@ -27,7 +27,7 @@ const ExerciseTimeChart = () => {
     const unsubscribeAuth = auth.onAuthStateChanged((user) => {
       if (user) {
         const userRef = doc(db, "users", user.uid);
-        // Use onSnapshot to listen for realtime updates on the user document.
+      
         const unsubscribe = onSnapshot(
           userRef,
           (docSnap) => {
@@ -52,6 +52,7 @@ const ExerciseTimeChart = () => {
                       "#FFCE56",
                       "#4BC0C0",
                       "#FF9F40",
+                      "#9966FF",
                     ],
                     hoverBackgroundColor: [
                       "#FF6384",
@@ -59,6 +60,7 @@ const ExerciseTimeChart = () => {
                       "#FFCE56",
                       "#4BC0C0",
                       "#FF9F40",
+                      "#9966FF",
                     ],
                   },
                 ],

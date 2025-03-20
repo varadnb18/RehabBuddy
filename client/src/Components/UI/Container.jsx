@@ -11,7 +11,7 @@ function Container() {
   const navigate = useNavigate();
 
   const HandleClick = (data) => {
-    navigate(`/${data.name}`);
+    navigate(`/${data.pose}`);
   };
 
   useEffect(() => {
@@ -46,25 +46,25 @@ function Container() {
       {loading
         ? // Skeleton Loader
           Array(6)
-            .fill(0)
-            .map((_, index) => (
-              <div
-                key={index}
-                className="flex flex-col items-center animate-pulse"
-              >
-                <div className="w-[21.7rem] h-[12.4rem] bg-gray-300 rounded-md"></div>
-                <div className="content p-[0.7rem] pb-[0rem] w-full">
-                  <div className="h-4 bg-gray-300 rounded w-3/4 mt-2"></div>
-                  <div className="h-3 bg-gray-300 rounded w-full mt-2"></div>
-                  <div className="h-3 bg-gray-300 rounded w-5/6 mt-2"></div>
-                </div>
+          .fill(0)
+          .map((_, index) => (
+            <div
+              key={index}
+              className="flex flex-col items-start w-[21.7rem] animate-pulse"
+            >
+              <div className="w-full h-[12.4rem] bg-gray-300 rounded-md"></div>
+              <div className="flex flex-col p-[0.7rem] gap-2 w-full">
+                <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+                <div className="h-3 bg-gray-300 rounded w-full"></div>
+                <div className="h-3 bg-gray-300 rounded w-5/6"></div>
               </div>
-            ))
+            </div>
+          ))
         : // Actual Data
           data.map((datas, index) => (
             <div
               key={index}
-              className="each-box flex flex-col items-center"
+             
               onClick={() => HandleClick(datas)}
             >
               <img
@@ -72,13 +72,14 @@ function Container() {
                 alt={datas.name}
                 className="w-[21.7rem] h-[12.4rem] object-cover"
               />
-              <div className="content p-[0.7rem] pb-[0rem]">
-                <h4 className="mt-2 text-[#3F6E71] font-[700] leading-[1.5rem] mb-[0.5rem]">
+              <div className="flex-col content p-[0.7rem] pb-[0rem]">
+                <h4 className=" text-[#3F6E71] font-[700] leading-[1.5rem]">
                   {datas.name}
                 </h4>
-                <p className="leading-[1.5rem] text-[#343D3C] mb-[1rem]">
-                  {datas.description}
-                </p>
+                <p className="des leading-[1.5rem] text-red-500 mb-[1rem] text-[0.6rem]" style={{fontSize:"0.9rem"}}>
+  {datas.description}
+</p>
+
               </div>
             </div>
           ))}
