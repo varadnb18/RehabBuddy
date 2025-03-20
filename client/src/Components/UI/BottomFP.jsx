@@ -1,15 +1,26 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import boy from "../../Images/plankexc.webp";
 import "./BottomFP.css";
 
 const BottomFP = () => {
+  const navigate = useNavigate();
+
+  const handleNavigation = () => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      navigate("/programs"); 
+    } else {
+      navigate("/Login-Page"); 
+    }
+  };
   return (
     <div className="bottomfp-container flex justify-center items-start mb-20 bg-white">
       <div className="bottomfp-wrapper flex justify-between bg-white w-[85%]">
         {/* Right Section - Content */}
         <div className="bottomfp-content flex flex-col ml-10 max-w-[520px]">
           <h2 className="bottomfp-title text-[2.3rem] font-bold mb-5">
-            AI Solutions for Precision and Customization
+          Stay Consistent, Stay Inspired
           </h2>
 
           <div className="bottomfp-feature flex items-center mt-5 gap-3 mb-2">
@@ -21,10 +32,10 @@ const BottomFP = () => {
             </div>
             <div>
               <h3 className="bottomfp-heading font-bold text-[1.2rem]">
-                Motion Tracking: Differentiate Yourself
+              Stay Motivated with Streak Tracking
               </h3>
               <p className="bottomfp-text text-md text-gray-600 text-[1rem]">
-                Using AI to improve compliance, adherence & outcomes.
+              Build healthy habits by maintaining exercise streaks and tracking progress over time.
               </p>
             </div>
           </div>
@@ -38,16 +49,17 @@ const BottomFP = () => {
             </div>
             <div>
               <h3 className="bottomfp-heading font-bold text-[1.2rem]">
-                Integration: Unlimited Content
+              Earn Rewards & Badges
               </h3>
               <p className="bottomfp-text text-md text-gray-600 text-[1rem]">
-                Use your content with our API + SDK integration.
+              Stay engaged with gamified achievements - unlock badges and milestones as you progress.
               </p>
             </div>
           </div>
           <div>
-            <button className="STUDIES mt-6 bg-gray-800 text-white px-7 py-4 rounded-xl hover:bg-gray-700 font-bold">
-              VIEW CASE STUDIES &gt;
+            
+            <button className="STUDIES mt-6 bg-gray-800 text-white px-7 py-4 rounded-xl hover:bg-gray-700 font-bold" onClick={handleNavigation}>
+            Join the Movement!
             </button>
           </div>
         </div>

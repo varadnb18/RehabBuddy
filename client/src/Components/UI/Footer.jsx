@@ -6,6 +6,8 @@ import {
   FaInstagram,
 } from "react-icons/fa";
 
+import whitelogo from "../../Images/whitelogo.png";
+
 const Footer = () => {
   return (
     <footer className="footer bg-black text-white py-16 px-6">
@@ -13,19 +15,22 @@ const Footer = () => {
         {/* Left Section */}
         <div className="w-full md:w-auto text-center md:text-left">
           <img
-            src="https://www.elitefitforyou.com/img/EliteFitAI-Logo.21f550b3.svg"
+            src={whitelogo}
             alt="EliteFit.AI Logo"
-            className="h-12 mb-2 mx-auto md:ml-5"
+            className=" mx-[-10px] md:ml- w-48 h-auto"
+            w
           />
-          <h2 className="text-lg mb-3 tracking-widest">ELITEFIT.AI</h2>
-          <p className="text-md mb-1">Copyright © EliteFit Pte Ltd</p>
+
+          <p className="text-md mb-1">Copyright © RehabBuddy</p>
           <p className="text-md mb-4">All Rights Reserved.</p>
 
           {/* Social Icons */}
           <div className="flex justify-center md:justify-start space-x-5">
             <FaFacebookF className="text-lg cursor-pointer hover:text-green-400" />
             <FaLinkedinIn className="text-lg cursor-pointer hover:text-green-400" />
+            <a href="https://youtu.be/T57rCqYXOPE?si=osWMul1uWIWrOVA-" target="_blank" rel="noopener noreferrer">
             <FaYoutube className="text-lg cursor-pointer hover:text-green-400" />
+            </a>
             <FaInstagram className="text-lg cursor-pointer hover:text-green-400" />
           </div>
         </div>
@@ -47,10 +52,10 @@ const Footer = () => {
 
           <div>
             <h3 className="text-[#6CB33F] font-bold mb-2 text-lg">
-              About EliteFit.AI
+              About RehabBuddy
             </h3>
             <ul className="text-md space-y-3">
-              <li>Why EliteFit.AI</li>
+              <li>Why RehabBuddy</li>
               <li>Careers</li>
               <li>Contact Us</li>
             </ul>
@@ -80,3 +85,5 @@ const Footer = () => {
 };
 
 export default Footer;
+
+

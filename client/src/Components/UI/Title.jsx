@@ -33,7 +33,7 @@ function Title() {
         <img
           src={websitelogo}
           alt="EliteFit Logo"
-          className="logo max-h-[160px] aspect-[3/2] object-contain"
+          className="logo max-h-[200px] aspect-[3/2] object-contain"
         />
       </div>
 

@@ -1,19 +1,30 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import girl from "../../Images/girl-workout.webp";
 import "./LowerFP.css";
 
 const LowerFP = () => {
+  const navigate = useNavigate();
+
+  const handleNavigation = () => {
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      navigate("/programs"); 
+    } else {
+      navigate("/Login-Page"); 
+    }
+  };
+
   return (
     <div className="lower-fp-container">
       <div className="lower-fp-wrapper">
-        {/* Center - AI Tracked Image */}
+        
         <div className="lower-fp-image">
           <img src={girl} alt="Workout AI Tracking" />
         </div>
 
-        {/* Right Section - Content */}
         <div className="lower-fp-content">
-          <h2>Elevate Engagement and Value with AI</h2>
+          <h2>Enhance Recovery and Engagement with AI</h2>
 
           <div className="lower-fp-feature">
             <div
@@ -26,9 +37,9 @@ const LowerFP = () => {
               />
             </div>
             <div>
-              <h3 className="font-bold text-[1.3rem]">Increase revenue</h3>
+              <h3 className="font-bold text-[1.3rem]">Accelerate Progress</h3>
               <p className="text-md text-gray-600 text-[1.1rem]">
-                Scale swiftly and amplify revenue with AI-driven insights.
+                Speed up rehabilitation with AI-driven insights and personalized feedback.
               </p>
             </div>
           </div>
@@ -44,14 +55,16 @@ const LowerFP = () => {
               />
             </div>
             <div>
-              <h3 className="font-bold text-[1.3rem]">Boost User Engagement</h3>
+              <h3 className="font-bold text-[1.3rem]">Ensure Better Compliance</h3>
               <p className="text-md text-gray-600 text-[1.1rem]">
-                Skyrocket user involvement and interaction by up to 10x.
+                Improve exercise adherence and consistency with real-time guidance.
               </p>
             </div>
           </div>
 
-          <button className="STUDIES">VIEW CASE STUDIES &gt;</button>
+          <button className="STUDIES" onClick={handleNavigation}>
+            Get Started Now!
+          </button>
         </div>
       </div>
     </div>

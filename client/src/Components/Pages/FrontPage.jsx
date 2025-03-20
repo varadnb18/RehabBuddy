@@ -21,9 +21,9 @@ function FrontPage() {
       <div>
         <BottomFP />
       </div>
-      {/* <div>
+      <div>
         <Footer />
-      </div> */}
+      </div>
 
       {/* Chatbot Icon */}
       <ChatBotIcon />

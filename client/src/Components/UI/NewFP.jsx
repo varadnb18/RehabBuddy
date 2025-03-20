@@ -18,16 +18,16 @@ function NewFP() {
         <div className="flex justify-center items-center w-full px-4">
           <div className="area flex flex-col items-start max-w-[40rem] text-left">
           <h1 className="text-[40px] md:text-[45px] font-medium leading-[1.1]">
-          <span className="A">R</span>ehabBuddy{" "}
-          <span className="word">AI-Powered</span> Rehabilitation Assistant
-          Guided recovery with real-time feedback for faster healing.
+          <span className="A">R</span>ehabBuddy{" "} 
+          <span className="word">AI-Powered</span> Rehabilitation Assistant:
+          Quick recovery with real-time feedback.
         </h1>
 
         <p className="text-gray-500 text-lg mt-4">
         Boost productivity with AI for effective compliance, improved adherence, and        
         impactful results.
         </p>
-
+      
             {/* <button className="demo mt-4 text-white px-6 py-4 rounded-2xl text-lg font-semibold">
               Book A Demo
             </button> */}
@@ -37,15 +37,8 @@ function NewFP() {
         {/* Right Section */}
         <div className=" flex justify-center items-center w-full">
           <div className="video rounded-xl overflow-hidden shadow-lg w-full max-w-[630px]">
-          <iframe
-  src="https://www.youtube.com/embed/H7AUbAZTXKM?si=QRTSmnB3_-AiQmxH"
-  title="Trainer Video"
-  allow="autoplay; encrypted-media"
-  allowFullScreen
-  className="w-full h-[300px] md:h-[530px] object-cover"
-  muted
-/>
-
+          <iframe src="https://www.youtube.com/embed/T57rCqYXOPE" title="Trainer Video"
+          allow="autoplay; encrypted-media" allowFullScreen className="w-full h-[300px] md:h-[530px] object-cover"/>
           </div>
         </div>
       </div>
