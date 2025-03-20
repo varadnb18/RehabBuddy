@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { ChevronDownIcon, Box, Button } from "@chakra-ui/icons";
+import { ChevronDownIcon, Box } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
-import ProfilePopup from "./ProfilePopup";
 import websitelogo from "../../Images/website-logo.png";
 import "./Title.css";
 
@@ -20,11 +19,20 @@ function Title() {
     window.location.reload();
   };
 
+  const handleScrollToBottom = () => {
+    const footer = document.getElementById("footer");
+    console.log("Footer element:", footer);
+    if (footer) {
+      footer.scrollIntoView({ behavior: "smooth", block: "end" });
+    } else {
+      console.warn("Footer element not found");
+    }
+  };
+
   const menuItems = [
     { name: "Home", path: "/" },
     { name: "Programs", path: "/programs" },
     { name: "Profile", path: "/Profile" },
-    { name: "ContactUs", path: "/" },
   ];
 
   return (
@@ -33,7 +41,7 @@ function Title() {
         <img
           src={websitelogo}
           alt="EliteFit Logo"
-          className="logo max-h-[200px] aspect-[3/2] object-contain"
+          className="logo max-h-[130px] aspect-[3/2] object-contain"
         />
       </div>
 
@@ -49,18 +57,28 @@ function Title() {
               </Box>
             </li>
           ))}
+          <li>
+            <Box as="button" onClick={handleScrollToBottom} aria-label="Scroll to Footer">
+              <span className="flex items-center gap-1 cursor-pointer">
+                Contact Us
+                <ChevronDownIcon boxSize={5} className="translate-y-[2px]" />
+              </span>
+            </Box>
+          </li>
         </ul>
       </div>
 
       {authToken ? (
-        // <ProfilePopup handleLogout={handleLogout} />
-        <button className="signin px-[1.5rem] py-[0.6rem] text-base font-bold text-[#0d2436] border-[1px] border-[#6CB33F] rounded-full bg-white hover:bg-green-50 transition" onClick={handleLogout}>
+        <button
+          className="signin px-[1.5rem] py-[0.6rem] text-base font-bold text-[#0d2436] border-[1px] border-[#6CB33F] rounded-full bg-white hover:bg-green-50 transition"
+          onClick={handleLogout}
+        >
           Logout
         </button>
       ) : (
         <Link to="/Login-Page">
           <button className="signin px-[1.5rem] py-[0.6rem] text-base font-bold text-[#0d2436] border-[1px] border-[#6CB33F] rounded-full bg-white hover:bg-green-50 transition">
-            SignIn
+            Sign In
           </button>
         </Link>
       )}

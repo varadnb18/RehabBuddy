@@ -1,11 +1,10 @@
 import React from "react";
-import logo from "../../Images/logo.png";
+import websitelogo from "../../Images/website-logo.png";
 
 const Logo = () => {
   return (
     <div className="logo">
-      <img src={logo} alt="easyclass" />
-      <h4>easyclass</h4>
+      <img src={websitelogo} alt="rehabBuddy" style={{ width: "150px", height: "auto" }} />
     </div>
   );
 };
