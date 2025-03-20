@@ -12,6 +12,7 @@ function SplitingWindow() {
   const startTimeRef = useRef(Date.now());
   const totalStartTimeRef = useRef(Date.now());
   const screenStartTimeRef = useRef(Date.now());
+  const videoRef = useRef(null);
 
   const pointsAccumulationRef = useRef(0);
   const [sizes, setSizes] = useState(["50%", "50%"]);
@@ -20,6 +21,17 @@ function SplitingWindow() {
     console.log("New sizes:", newSizes);
     setSizes(newSizes);
   };
+
+  // 🔹 Define S3 video URLs mapped to exercise names
+  const videoURLs = {
+    chair: "https://v5-coders-tfjs-models.s3.ap-south-1.amazonaws.com/finalchair.mp4",
+    tree: "https://v5-coders-tfjs-models.s3.ap-south-1.amazonaws.com/treefinal.mp4",
+    shoulder_stand: "https://v5-coders-tfjs-models.s3.ap-south-1.amazonaws.com/sholderfinal.mp4",
+    plank: "https://v5-coders-tfjs-models.s3.ap-south-1.amazonaws.com/plankfinal.mp4",
+  };
+
+  // 🔹 Get the corresponding video URL for the selected exercise
+  const videoSrc = videoURLs[name] || "";
 
   useEffect(() => {
     if (!userId) return;
@@ -35,7 +47,6 @@ function SplitingWindow() {
       if (pointsAccumulationRef.current >= 5) {
         const blocks = Math.floor(pointsAccumulationRef.current / 5);
         pointsToAward = blocks * 10;
-
         pointsAccumulationRef.current -= blocks * 5;
       }
 
@@ -58,47 +69,21 @@ function SplitingWindow() {
             },
           };
 
-          const totalTimeInMs = Date.now() - totalStartTimeRef.current;
-          const totalTimeInMinutes = Math.floor(totalTimeInMs / 60000);
-          const updatedTotalTime = userData.totalTime || 0;
-          const updatedTotalTimeInMinutes = updatedTotalTime + totalTimeInMinutes;
-
-          const screenTimeInMs = Date.now() - screenStartTimeRef.current;
-          const screenTimeInMinutes = Math.floor(screenTimeInMs / 60000);
-          const updatedScreenTime = userData.screenTime || {};
-          const updatedScreenTimeForToday = (updatedScreenTime[today] || 0) + screenTimeInMinutes;
-          const updatedScreenTimeData = {
-            ...updatedScreenTime,
-            [today]: updatedScreenTimeForToday,
-          };
-
           const updateData = {
             exerciseTime: updatedExerciseTime,
-            totalTime: updatedTotalTimeInMinutes,
-            screenTime: updatedScreenTimeData,
+            totalTime: (userData.totalTime || 0) + durationInMinutes,
+            screenTime: {
+              ...(userData.screenTime || {}),
+              [today]: ((userData.screenTime?.[today] || 0) + durationInMinutes),
+            },
           };
 
           if (pointsToAward > 0) {
-            const newTotalPoints = (userData.points || 0) + pointsToAward;
-            updateData.points = newTotalPoints;
-            console.log(`Awarded ${pointsToAward} points. Total points: ${newTotalPoints}`);
-
-            const userBadges = userData.badges || [];
-            if (newTotalPoints >= 30 && !userBadges.includes("First Milestone")) {
-              userBadges.push("First Milestone");
-              updateData.badges = userBadges;
-              console.log("User awarded a badge: First Milestone");
-            }
+            updateData.points = (userData.points || 0) + pointsToAward;
           }
 
           await updateDoc(userRef, updateData);
-          console.log("Exercise time, total time, screen time, and points updated in Firestore!");
-
-          startTimeRef.current = Date.now();
-          totalStartTimeRef.current = Date.now();
-          screenStartTimeRef.current = Date.now();
-        } else {
-          console.log("User document does not exist.");
+          console.log("Exercise time updated in Firestore!");
         }
       } catch (error) {
         console.error("Firestore update error:", error);
@@ -121,10 +106,35 @@ function SplitingWindow() {
         onChange={handleSizeChange}
         style={{ height: "100%" }}
       >
+        {/* Left Pane: Webcam */}
         <div style={{ background: "#ddd", height: "100%" }}>
           <WebCam />
         </div>
-        <div style={{ background: "#a1a5a9", height: "100%" }}>Pane 2</div>
+
+        {/* Right Pane: Exercise Video */}
+        <div
+          style={{
+            background: "#a1a5a9",
+            height: "100%",
+            overflow: "hidden",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <h1>{name.charAt(0).toUpperCase() + name.slice(1)}</h1>
+          <div style={{ width: "100%", height: "calc(100% - 60px)", position: "relative" }}>
+            {videoSrc ? (
+              <video ref={videoRef} style={{ width: "100%", height: "100%", objectFit: "contain" }} controls>
+                <source src={videoSrc} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <p>Video not available</p>
+            )}
+          </div>
+        </div>
       </SplitPane>
     </div>
   );

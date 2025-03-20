@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
 import * as tf from '@tensorflow/tfjs';
 import "./WebCam.css"
+import { useParams } from 'react-router-dom';
 
 function WebCam() {
+  const {name}=useParams();
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  const [selectedPose, setSelectedPose] = useState('tree');
+  const [selectedPose, setSelectedPose] = useState(name);
   const [accuracy, setAccuracy] = useState(0);
   const [isCorrectPose, setIsCorrectPose] = useState(false);
   const [timer, setTimer] = useState(0);
@@ -72,6 +74,7 @@ function WebCam() {
   };
 
   useEffect(() => {
+    
     // Initialize MediaPipe and TensorFlow model
     const initMediaPipe = async () => {
       try {
@@ -682,6 +685,8 @@ function WebCam() {
     [23, 25], [25, 27], // left leg
     [24, 26], [26, 28]  // right leg
   ];
+
+  console.log("Name: ",name);
 
   return (
     <div className="app-container" style={{height:"50rem"}}>

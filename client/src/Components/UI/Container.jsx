@@ -11,7 +11,7 @@ function Container() {
   const navigate = useNavigate();
 
   const HandleClick = (data) => {
-    navigate(`/${data.name}`);
+    navigate(`/${data.pose}`);
   };
 
   useEffect(() => {

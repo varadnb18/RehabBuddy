@@ -11,6 +11,7 @@ import FrontPage from "./Components/Pages/FrontPage";
 import ProtectedRoute from "./ProtectedRoute";
 import ChatPage from "./Components/UI/ChatPage";
 import Badges from "./Components/Pages/Badges";
+import { PoseContextProvider } from "./Components/Pages/poseContext";
 
 const isAuthenticated = () => {
   return localStorage.getItem("authToken") !== null;
@@ -18,7 +19,8 @@ const isAuthenticated = () => {
 
 function App() {
   return (
-    <Routes>
+    <PoseContextProvider>
+      <Routes>
       <Route path="/" element={<FrontPage />} />
 
       <Route
@@ -66,6 +68,8 @@ function App() {
 
       <Route path="*" element={<NotFound />} />
     </Routes>
+    </PoseContextProvider>
+    
   );
 }
 
