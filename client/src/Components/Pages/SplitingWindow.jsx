@@ -15,7 +15,7 @@ function SplitingWindow() {
   const videoRef = useRef(null);
 
   const pointsAccumulationRef = useRef(0);
-  const [sizes, setSizes] = useState(["50%", "50%"]);
+  const [sizes, setSizes] = useState(["70%", "30%"]); // 🔹 Default ratio: 70% Webcam, 30% Video
 
   const handleSizeChange = (newSizes) => {
     console.log("New sizes:", newSizes);
@@ -74,7 +74,7 @@ function SplitingWindow() {
             totalTime: (userData.totalTime || 0) + durationInMinutes,
             screenTime: {
               ...(userData.screenTime || {}),
-              [today]: ((userData.screenTime?.[today] || 0) + durationInMinutes),
+              [today]: (userData.screenTime?.[today] || 0) + durationInMinutes,
             },
           };
 
@@ -102,7 +102,7 @@ function SplitingWindow() {
     <div style={{ height: "100vh", width: "100vw" }}>
       <SplitPane
         split="vertical"
-        sizes={sizes}
+        sizes={sizes} // 🔹 70% Webcam, 30% Video
         onChange={handleSizeChange}
         style={{ height: "100%" }}
       >
@@ -126,7 +126,12 @@ function SplitingWindow() {
           <h1>{name.charAt(0).toUpperCase() + name.slice(1)}</h1>
           <div style={{ width: "100%", height: "calc(100% - 60px)", position: "relative" }}>
             {videoSrc ? (
-              <video ref={videoRef} style={{ width: "100%", height: "100%", objectFit: "contain" }} controls>
+              <video
+                ref={videoRef}
+                style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                controls
+                loop // 🔹 Loop the video
+              >
                 <source src={videoSrc} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
