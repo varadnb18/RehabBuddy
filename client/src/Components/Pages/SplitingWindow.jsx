@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import SplitPane from "split-pane-react";
 import "split-pane-react/esm/themes/default.css";
 import { auth, db } from "../FireBase/FireBase";
@@ -9,7 +9,7 @@ import WebCam from "../WebCam/WebCam";
 function SplitingWindow() {
   const { name } = useParams();
   const userId = auth.currentUser?.uid;
-  // Initialize the references with the current time
+
   const startTimeRef = useRef(Date.now());
   const totalStartTimeRef = useRef(Date.now());
   const screenStartTimeRef = useRef(Date.now());
@@ -22,6 +22,15 @@ function SplitingWindow() {
     setSizes(newSizes);
   };
 
+  const location = useLocation();
+
+  // Set a flag in sessionStorage when the component unmounts.
+  useEffect(() => {
+    return () => {
+      sessionStorage.setItem("reloadPrograms", "true");
+    };
+  }, []);
+
   const videoURLs = {
     chair: "https://v5-coders-tfjs-models.s3.ap-south-1.amazonaws.com/finalchair.mp4",
     tree: "https://v5-coders-tfjs-models.s3.ap-south-1.amazonaws.com/treefinal.mp4",
@@ -29,7 +38,7 @@ function SplitingWindow() {
     plank: "https://v5-coders-tfjs-models.s3.ap-south-1.amazonaws.com/plankfinal.mp4",
   };
 
-  // 🔹 Get the corresponding video URL for the selected exercise
+  // Get the corresponding video URL for the selected exercise
   const videoSrc = videoURLs[name] || "";
 
   useEffect(() => {
@@ -93,7 +102,7 @@ function SplitingWindow() {
             },
           };
 
-          // Calculate additional minutes for total and screen time using their respective durations
+          // Calculate additional minutes for total and screen time
           const totalMinutes = Math.floor(totalDurationMs / 60000);
           const updatedTotalTime = (userData.totalTime || 0) + totalMinutes;
 
@@ -138,7 +147,7 @@ function SplitingWindow() {
           await updateDoc(userRef, updateData);
           console.log("Updated exercise time, total time, screen time, and points in Firestore!");
 
-          // Reset all time refs to the current time so that the next update uses the correct interval
+          // Reset time references for the next update cycle
           startTimeRef.current = now;
           totalStartTimeRef.current = now;
           screenStartTimeRef.current = now;
@@ -164,7 +173,7 @@ function SplitingWindow() {
     <div style={{ height: "100vh", width: "100vw" }}>
       <SplitPane
         split="vertical"
-        sizes={sizes} // 🔹 70% Webcam, 30% Video
+        sizes={sizes} // 70% Webcam, 30% Video
         onChange={handleSizeChange}
         style={{ height: "100%" }}
       >
@@ -192,7 +201,7 @@ function SplitingWindow() {
                 ref={videoRef}
                 style={{ width: "100%", height: "100%", objectFit: "contain" }}
                 controls
-                loop // 🔹 Loop the video
+                loop
               >
                 <source src={videoSrc} type="video/mp4" />
                 Your browser does not support the video tag.
