@@ -4,6 +4,7 @@ import { Send, ArrowLeft, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import poco from "../../Images/Poco.png";
 import "./ChatPage.css";
+import ReactMarkdown from 'react-markdown';
 
 const API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
 // const API_KEY = "AIzaSyAe427Kds-48nrzGBgdNRRCKwqntqe1YRg";
@@ -181,7 +182,7 @@ Response Guidelines:
                   : "bg-white text-gray-800"
               }`}
             >
-              {message.content}
+              <ReactMarkdown>{message.content}</ReactMarkdown>
             </div>
           </div>
         ))}
