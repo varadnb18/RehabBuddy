@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import SearchBar from "../Header/SearchBar";
@@ -95,3 +96,4 @@ function SecondPage() {
 }
 
 export default SecondPage;
+

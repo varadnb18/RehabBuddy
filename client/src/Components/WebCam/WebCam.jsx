@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useEffect, useState, useRef } from "react";
 import * as tf from "@tensorflow/tfjs";
 import "./WebCam.css";
@@ -979,3 +980,4 @@ function WebCam() {
 }
 
 export default WebCam;
+

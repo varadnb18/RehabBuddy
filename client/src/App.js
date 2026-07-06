@@ -10,7 +10,7 @@ import SplitingWindow from "./Components/Pages/SplitingWindow";
 import FrontPage from "./Components/Pages/FrontPage";
 import ProtectedRoute from "./ProtectedRoute";
 import ChatPage from "./Components/UI/ChatPage";
-import toast, { Toaster } from "react-hot-toast";
+import { ToastContainer } from "react-toastify";
 
 
 const isAuthenticated = () => {

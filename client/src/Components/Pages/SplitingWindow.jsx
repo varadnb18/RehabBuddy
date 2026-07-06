@@ -22,7 +22,7 @@ function SplitingWindow() {
     setSizes(newSizes);
   };
 
-  const location = useLocation();
+  // location removed due to ESLint warning
 
   // Set a flag in sessionStorage when the component unmounts.
   useEffect(() => {

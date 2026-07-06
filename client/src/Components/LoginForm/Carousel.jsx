@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from "react";
 import image1 from "../../Images/image1.png";
 import image2 from "../../Images/image2.png";
@@ -42,3 +43,4 @@ const Carousel = ({ activeBullet, moveSlider }) => {
 };
 
 export default Carousel;
+

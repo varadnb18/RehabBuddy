@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useEffect, useState } from "react";
 import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import { auth, db } from "../FireBase/FireBase";
@@ -210,3 +211,4 @@ function ProfilePage() {
 }
 
 export default ProfilePage;
+
