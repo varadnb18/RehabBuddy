@@ -21,6 +21,21 @@ function WebCam() {
   const poseClassifier = useRef(null);
   const tfModel = useRef(null);
 
+  // Sync selectedPose with URL parameter when navigating between poses
+  useEffect(() => {
+    if (name && name !== selectedPose) {
+      setSelectedPose(name);
+      // Reset the accuracy and timers for the new pose
+      setAccuracy(0);
+      setIsCorrectPose(false);
+      setBestScore(0);
+      bestScoreRef.current = 0;
+      if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+      setTimer(0);
+      setIsActive(false);
+    }
+  }, [name, selectedPose]);
+
   // Updated pose classes to include tree and plank
   // Option 1: Update pose classes to match the model's 8 classes
   const poseClasses = [

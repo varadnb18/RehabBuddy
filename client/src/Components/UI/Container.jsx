@@ -20,6 +20,24 @@ function Container() {
         const querySnapshot = await getDocs(collection(db, "exercises"));
         const dataList = querySnapshot.docs.map((doc) => doc.data());
 
+        // Swap the frontend image, name, and description for Chair and Tree poses
+        const chairItem = dataList.find(d => d.pose === "chair" || (d.name || "").toLowerCase().includes("chair"));
+        const treeItem = dataList.find(d => d.pose === "tree" || (d.name || "").toLowerCase().includes("tree"));
+        
+        if (chairItem && treeItem) {
+          const tempName = chairItem.name;
+          const tempImg = chairItem.img;
+          const tempDesc = chairItem.description;
+          
+          chairItem.name = treeItem.name;
+          chairItem.img = treeItem.img;
+          chairItem.description = treeItem.description;
+          
+          treeItem.name = tempName;
+          treeItem.img = tempImg;
+          treeItem.description = tempDesc;
+        }
+
         // Wait at least 3 seconds before displaying data
         setTimeout(() => {
           setData(dataList);
