@@ -26,7 +26,7 @@ function ChatPage() {
   const handleInitialMessage = async () => {
     try {
       setIsLoading(true);
-      const res = await fetch("http://localhost:5000/api/chat", {
+      const res = await fetch("https://techfiesta16.onrender.com/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt: "", history: [], is_initial: true })
@@ -81,7 +81,7 @@ function ChatPage() {
     setError(null);
 
     try {
-      const res = await fetch("http://localhost:5000/api/chat", {
+      const res = await fetch("https://techfiesta16.onrender.com/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt: userMessage, history: currentHistory, is_initial: false })
