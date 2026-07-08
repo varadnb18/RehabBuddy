@@ -1,9 +1,13 @@
 from flask import Flask, request, jsonify
 import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
-API_KEY = "AIzaSyAe427Kds-48nrzGBgdNRRCKwqntqe1YRg"
+API_KEY = os.environ.get("GEMINI_API_KEY")
 
 @app.route("/api/generate", methods=["POST"])
 def generate():

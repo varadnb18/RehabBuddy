@@ -8,10 +8,7 @@ import "./ChatPage.css";
 import ReactMarkdown from 'react-markdown';
 
 const API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
-// const API_KEY = "AIzaSyAe427Kds-48nrzGBgdNRRCKwqntqe1YRg";
 const genAI = new GoogleGenerativeAI(API_KEY);
-
-// console.log("Gemini API Key:", API_KEY);
 
 function ChatPage() {
   const [messages, setMessages] = useState([]);
