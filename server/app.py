@@ -1,42 +1,25 @@
-from flask import Flask, request, jsonify
-import requests
+from flask import Flask
+from flask_cors import CORS
 import os
 from dotenv import load_dotenv
 
+# Import controllers
+from controllers.chat_controller import chat_bp
+
+# Load environment variables
 load_dotenv()
 
+# Initialize Flask app
 app = Flask(__name__)
+# Enable CORS for all domains on all routes to allow React frontend to communicate
+CORS(app)
 
-API_KEY = os.environ.get("GEMINI_API_KEY")
+# Register Blueprints (Controllers)
+app.register_blueprint(chat_bp)
 
-@app.route("/api/generate", methods=["POST"])
-def generate():
-    data = request.get_json()
-    if not data or "prompt" not in data:
-        return jsonify({"error": "Missing prompt in request"}), 400
-
-    prompt = data["prompt"]
-
-    try:
-        response = requests.post(
-            "https://generativeai.googleapis.com/v1/generate",
-            json={
-                "prompt": prompt,
-                "model": "gemini-2.0-flash-lite"
-            },
-            headers={"Authorization": f"Bearer {API_KEY}"}
-        )
-
-        if response.status_code != 200:
-            return jsonify({"error": "Failed to generate response from Gemini API"}), 500
-
-        data = response.json()
-        # Assume the response contains a key "generated_text" for the output
-        generated_text = data.get("generated_text", "")
-        return jsonify({"response": generated_text})
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+@app.route("/", methods=["GET"])
+def health_check():
+    return {"status": "ok", "message": "InC Backend is running!"}
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)

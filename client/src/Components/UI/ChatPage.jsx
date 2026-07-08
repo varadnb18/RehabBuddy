@@ -1,14 +1,11 @@
 /* eslint-disable */
 import React, { useState, useEffect, useRef } from "react";
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Send, ArrowLeft, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import poco from "../../Images/Poco.png";
 import "./ChatPage.css";
 import ReactMarkdown from 'react-markdown';
 
-const API_KEY = process.env.REACT_APP_GEMINI_API_KEY;
-const genAI = new GoogleGenerativeAI(API_KEY);
 
 function ChatPage() {
   const [messages, setMessages] = useState([]);
@@ -19,54 +16,29 @@ function ChatPage() {
   const navigate = useNavigate();
   const chatHistoryRef = useRef([]);
 
-  const systemPrompt = `You are Poco, a friendly penguin who is an expert rehabilitation assistant for humans. Your personality and expertise:
+  // System prompt has been securely moved to the backend
 
-- You are a cute and friendly penguin who loves helping humans recover from injuries
-- You have extensive knowledge in physical therapy, injury recovery, and rehabilitation exercises
-- You provide detailed, accurate, and safe guidance for various rehabilitation needs:
-  * Post-surgery recovery
-  * Sports injuries
-  * Physical therapy exercises
-  * Proper form and technique for exercises
-  * Recovery timelines and milestones
-  * Pain management techniques
-  * Rehabilitation equipment usage
-  * Progress tracking recommendations
-
-Response Guidelines:
-- Always maintain a friendly, encouraging, and supportive tone
-- Provide clear, step-by-step instructions for exercises when asked
-- Include safety warnings and precautions when relevant
-- Explain the benefits and purpose of each recommended exercise
-- For questions outside rehabilitation, politely explain that as a rehabilitation specialist, you can only help with recovery and exercise-related topics
-- Keep responses concise but informative
-- Never repeat your introduction after the first message
-- Focus on answering the user's specific question directly
-- For exercise instructions, always provide:
-  * Step-by-step instructions
-  * Proper form guidance
-  * Common mistakes to avoid
-  * Safety precautions
-  * Benefits of the exercise
-- Always remind users to consult their healthcare provider before starting any new exercise routine`;
 
   useEffect(() => {
-    if (!API_KEY) {
-      setError("Please set up your Gemini API key in the .env file");
-      return;
-    }
     handleInitialMessage();
   }, []);
 
   const handleInitialMessage = async () => {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash-lite" });
-    const initialPrompt = `${systemPrompt}\n\nProvide a warm introduction as Poco the penguin rehabilitation assistant, mentioning your expertise in human injury recovery and rehabilitation. Ask how you can help with their recovery journey.`;
-
     try {
       setIsLoading(true);
-      const result = await model.generateContent(initialPrompt);
-      const response = await result.response;
-      const text = await response.text(); // Await text response
+      const res = await fetch("http://localhost:5000/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: "", history: [], is_initial: true })
+      });
+      
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to fetch response");
+      }
+      
+      const text = data.response;
       const initialMessage = { role: "assistant", content: text };
       setMessages([initialMessage]);
       chatHistoryRef.current = [initialMessage];
@@ -74,7 +46,7 @@ Response Guidelines:
     } catch (error) {
       console.error("Error getting initial message:", error);
       setError(
-        "Unable to connect to Poco. Please check your API key and try again."
+        "Unable to connect to the backend server. Make sure the Python server is running."
       );
     } finally {
       setIsLoading(false);
@@ -95,37 +67,33 @@ Response Guidelines:
 
   const handleSend = async () => {
     if (!input.trim()) return;
-    if (!API_KEY) {
-      setError("Please set up your Gemini API key in the .env file");
-      return;
-    }
 
     const userMessage = input.trim();
     setInput("");
     const newUserMessage = { role: "user", content: userMessage };
     setMessages((prev) => [...prev, newUserMessage]);
+    
+    // We append to history ref but we'll send the previous history to the backend
+    const currentHistory = [...chatHistoryRef.current];
     chatHistoryRef.current.push(newUserMessage);
+    
     setIsLoading(true);
     setError(null);
 
     try {
-      const model = genAI.getGenerativeModel({
-        model: "gemini-2.0-flash-lite",
+      const res = await fetch("http://localhost:5000/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: userMessage, history: currentHistory, is_initial: false })
       });
-
-      // Create conversation context with chat history
-      const conversationContext = chatHistoryRef.current
-        .map(
-          (msg) =>
-            `${msg.role === "user" ? "User" : "Assistant"}: ${msg.content}`
-        )
-        .join("\n");
-
-      const prompt = `${systemPrompt}\n\nConversation history:\n${conversationContext}\n\nUser: ${userMessage}\n\nProvide a direct and helpful response to the user's question without repeating your introduction. If they ask about an exercise, provide detailed instructions and benefits.`;
-
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text = await response.text(); // Await text response
+      
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to fetch response");
+      }
+      
+      const text = data.response;
 
       const newAssistantMessage = { role: "assistant", content: text };
       setMessages((prev) => [...prev, newAssistantMessage]);
@@ -133,7 +101,7 @@ Response Guidelines:
     } catch (error) {
       console.error("Error getting response:", error);
       setError(
-        "Sorry, I had trouble processing your message. Please try again."
+        "Sorry, I had trouble processing your message. Make sure the backend server is running."
       );
     } finally {
       setIsLoading(false);
