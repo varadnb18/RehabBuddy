@@ -10,6 +10,9 @@ import {
 } from "./utils/PoseClassifier";
 import { usePoseTimer } from "./utils/PoseTimer";
 import { addReferenceImage } from "./utils/ReferenceOverlay";
+import { Pose } from "@mediapipe/pose";
+import { Camera } from "@mediapipe/camera_utils";
+import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 
 function WebCam() {
   const { name } = useParams();
@@ -80,10 +83,6 @@ function WebCam() {
           setMessageStatus("Using simplified pose detection (fallback mode)");
           poseClassifier.current = setupSimplePoseClassifier();
         }
-
-        const { Pose } = await import("@mediapipe/pose");
-        const { Camera } = await import("@mediapipe/camera_utils");
-        const { drawConnectors, drawLandmarks } = await import("@mediapipe/drawing_utils");
 
         const pose = new Pose({
           locateFile: (file) => {

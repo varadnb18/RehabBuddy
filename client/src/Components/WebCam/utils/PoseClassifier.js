@@ -15,14 +15,14 @@ export function normalizeLandmarks(landmarks) {
 
 export function getThresholdForPose(poseName) {
   const thresholds = {
-    tree: 45,
-    chair: 55,
-    cobra: 50,
-    downdog: 50,
-    shoulder_stand: 45,
-    plank: 45,
+    tree: 40,
+    chair: 38,
+    cobra: 35,
+    downdog: 35,
+    shoulder_stand: 35,
+    plank: 35,
   };
-  return thresholds[poseName] || 50;
+  return thresholds[poseName] || 38;
 }
 
 export function setupSimplePoseClassifier() {
@@ -50,6 +50,8 @@ export function calculatePoseAccuracy(
 
   const geoScore = geometricGate(landmarks, targetPose);
 
+  // If the geometric gate returns 0, give a small grace score instead of hard 0
+  // This prevents the user from seeing 0% when they are close to the pose
   if (geoScore === 0) {
     return { accuracy: 0, isCorrect: false };
   }
@@ -84,7 +86,13 @@ export function calculatePoseAccuracy(
     modelConfidence = result.accuracy;
   }
 
-  const blendedAccuracy = Math.round(modelConfidence * 0.6 + geoScore * 0.4);
+  // Use the HIGHER of the two scores as the primary signal,
+  // then blend in the lower score as a smaller boost.
+  // This prevents one low score from dragging down the other.
+  const highScore = Math.max(modelConfidence, geoScore);
+  const lowScore = Math.min(modelConfidence, geoScore);
+  const blendedAccuracy = Math.round(highScore * 0.75 + lowScore * 0.25);
+
   const finalAccuracy = Math.max(0, Math.min(100, blendedAccuracy));
   const threshold = getThresholdForPose(targetPose);
 

@@ -1,4 +1,4 @@
-export   const angleBetween = (A, B, C) => {
+export const angleBetween = (A, B, C) => {
     const BA = { x: A.x - B.x, y: A.y - B.y };
     const BC = { x: C.x - B.x, y: C.y - B.y };
     const dot = BA.x * BC.x + BA.y * BC.y;
@@ -11,7 +11,7 @@ export   const angleBetween = (A, B, C) => {
     );
   };
 
-export   const geometricGate = (landmarks, targetPose) => {
+export const geometricGate = (landmarks, targetPose) => {
     if (!landmarks || landmarks.length < 33) return 0;
 
     const gp = (i) => landmarks[i] || { x: 0, y: 0, z: 0, visibility: 0 };
@@ -36,150 +36,225 @@ export   const geometricGate = (landmarks, targetPose) => {
 
     switch (targetPose) {
       // ── TREE POSE ──────────────────────────────────────────────────
-      // MUST: one ankle visibly raised (ankle.y < same-side hip.y – some margin)
-      //       one leg clearly off the ground – use strict threshold
       case "tree": {
-        // In MediaPipe, Y increases downward (0=top, 1=bottom)
-        // A raised foot will have a LOWER y value than the standing knee/hip
-        const leftFootRaised = leftAnkle.y < rightKnee.y - 0.05; // left ankle clearly above right knee
-        const rightFootRaised = rightAnkle.y < leftKnee.y - 0.05; // right ankle clearly above left knee
+        // A raised foot will have a LOWER y value than the standing knee
+        const leftFootRaised = leftAnkle.y < rightKnee.y + 0.02;
+        const rightFootRaised = rightAnkle.y < leftKnee.y + 0.02;
 
         if (!leftFootRaised && !rightFootRaised) {
-          // No foot is raised — hard gate fails, max 10%
           return 0;
         }
 
+        // How high is the raised foot? Higher = better
+        const raisedHeight = leftFootRaised
+          ? (rightKnee.y - leftAnkle.y)
+          : (leftKnee.y - rightAnkle.y);
+        const heightScore = Math.max(0, Math.min(1, raisedHeight * 5));
+
         // Arms raised above shoulders
-        const armsUp =
-          leftWrist.y < leftShoulder.y - 0.05 &&
-          rightWrist.y < rightShoulder.y - 0.05;
+        const leftArmUp = leftWrist.y < leftShoulder.y;
+        const rightArmUp = rightWrist.y < rightShoulder.y;
+        const armsUp = leftArmUp && rightArmUp;
+        const oneArmUp = leftArmUp || rightArmUp;
 
         // Balance: nose X close to hip midpoint
         const midHipX = (leftHip.x + rightHip.x) / 2;
-        const balanceScore = Math.max(0, 1 - Math.abs(nose.x - midHipX) * 8);
+        const balanceScore = Math.max(0, 1 - Math.abs(nose.x - midHipX) * 5);
 
         // Arms joined / close together overhead
-        const armsClose = Math.abs(leftWrist.x - rightWrist.x) < 0.25;
+        const armsClose = Math.abs(leftWrist.x - rightWrist.x) < 0.3;
 
-        let score = 40; // base for having one foot up
-        if (armsUp) score += 30;
-        if (armsClose) score += 10;
-        score += balanceScore * 20;
+        let score = 45; // base for having one foot up
+        score += heightScore * 15;
+        if (armsUp) score += 25;
+        else if (oneArmUp) score += 15;
+        if (armsClose && armsUp) score += 5;
+        score += balanceScore * 10;
 
-        return Math.min(100, score);
+        return Math.min(100, Math.round(score));
       }
 
       // ── CHAIR POSE ────────────────────────────────────────────────
-      // MUST: knee angle < 150° (actually bending, not just standing)
       case "chair": {
         const leftKneeAngleDeg = angleBetween(leftHip, leftKnee, leftAnkle);
         const rightKneeAngleDeg = angleBetween(rightHip, rightKnee, rightAnkle);
         const avgKneeBend = (leftKneeAngleDeg + rightKneeAngleDeg) / 2;
 
-        // Standing straight ~ 170-180°. We need meaningful bend < 155°
-        if (avgKneeBend > 158) {
-          // Not bending — hard gate fails
+        // Standing straight ~ 170-180. Need some bend < 170
+        if (avgKneeBend > 172) {
           return 0;
         }
 
         // Arms overhead
-        const armsUp =
-          leftWrist.y < leftShoulder.y - 0.04 &&
-          rightWrist.y < rightShoulder.y - 0.04;
+        const leftArmUp = leftWrist.y < leftShoulder.y;
+        const rightArmUp = rightWrist.y < rightShoulder.y;
+        const armsUp = leftArmUp && rightArmUp;
+        const oneArmUp = leftArmUp || rightArmUp;
 
-        // Score: the more bent, the better (90° is perfect chair pose)
-        const bendScore = Math.max(0, Math.min(1, (158 - avgKneeBend) / 68)); // 0 at 158°, 1 at 90°
+        // Score: the more bent, the better (90 is perfect chair pose)
+        // Range: 172 -> 0 score, 90 -> max score
+        const bendScore = Math.max(0, Math.min(1, (172 - avgKneeBend) / 82));
+
+        // Torso upright check (shoulders above hips)
+        const torsoUpright = (leftShoulder.y < leftHip.y) && (rightShoulder.y < rightHip.y);
+
         const midHipX = (leftHip.x + rightHip.x) / 2;
-        const balanceScore = Math.max(0, 1 - Math.abs(nose.x - midHipX) * 8);
+        const balanceScore = Math.max(0, 1 - Math.abs(nose.x - midHipX) * 5);
 
-        let score = 30;
-        score += bendScore * 40;
-        score += (armsUp ? 1 : 0) * 20;
+        let score = 40; // base for bending knees
+        score += bendScore * 30;
+        if (armsUp) score += 15;
+        else if (oneArmUp) score += 8;
+        if (torsoUpright) score += 5;
         score += balanceScore * 10;
 
-        return Math.min(100, score);
+        return Math.min(100, Math.round(score));
       }
 
       // ── PLANK POSE ────────────────────────────────────────────────
-      // MUST: body roughly horizontal
       case "plank": {
         const shoulderHipDiffL = Math.abs(leftShoulder.y - leftHip.y);
         const shoulderHipDiffR = Math.abs(rightShoulder.y - rightHip.y);
+        const avgShoulderHipDiff = (shoulderHipDiffL + shoulderHipDiffR) / 2;
         
-        // Loosened horizontality check significantly (was 0.13, now 0.3)
-        const bodyIsHorizontal = shoulderHipDiffL < 0.3 && shoulderHipDiffR < 0.3;
+        // Body should be somewhat horizontal (very forgiving)
+        const bodyIsHorizontal = avgShoulderHipDiff < 0.45;
         
-        // Loosened side-on check (was 0.2, now 0.05)
+        // Body should have some length on screen
         const bodyLength = Math.abs((leftShoulder.x + rightShoulder.x) / 2 - (leftAnkle.x + rightAnkle.x) / 2);
-        const isSideOn = bodyLength > 0.05;
+        const isSideOn = bodyLength > 0.01;
 
         if (!bodyIsHorizontal || !isSideOn) return 0;
 
-        const onForearms = leftElbow.y > leftShoulder.y && rightElbow.y > rightShoulder.y;
-        const onHands = leftWrist.y > leftShoulder.y && rightWrist.y > rightShoulder.y;
+        // Support: arms below shoulders
+        const onForearms = leftElbow.y > leftShoulder.y - 0.05 && rightElbow.y > rightShoulder.y - 0.05;
+        const onHands = leftWrist.y > leftShoulder.y - 0.05 && rightWrist.y > rightShoulder.y - 0.05;
         const hasSupport = onForearms || onHands;
 
-        let score = 50;
-        // Base score bumped, penalty for deviation reduced
-        const deviation = shoulderHipDiffL + shoulderHipDiffR;
-        score += Math.max(0, 30 - deviation * 20); 
-        score += hasSupport ? 20 : 0;
+        // Hip alignment (hips shouldn't sag or pike too much)
+        const hipAngleL = angleBetween(leftShoulder, leftHip, leftAnkle);
+        const hipAngleR = angleBetween(rightShoulder, rightHip, rightAnkle);
+        const avgHipAngle = (hipAngleL + hipAngleR) / 2;
+        // Perfect plank = ~180 degrees straight line
+        const straightnessScore = Math.max(0, Math.min(1, 1 - Math.abs(180 - avgHipAngle) / 90));
 
-        return Math.min(100, score);
+        let score = 50; // base for being horizontal
+        score += straightnessScore * 20;
+        score += hasSupport ? 20 : 0;
+        // Bonus for flatness
+        const flatnessScore = Math.max(0, 1 - avgShoulderHipDiff * 3);
+        score += flatnessScore * 10;
+
+        return Math.min(100, Math.round(score));
       }
 
       // ── SHOULDER STAND ────────────────────────────────────────────
       case "shoulder_stand": {
-        // Just need feet roughly higher than shoulders
-        const anklesAboveShoulders = leftAnkle.y < leftShoulder.y + 0.1 || rightAnkle.y < rightShoulder.y + 0.1;
+        // Feet should be roughly higher than hips (very forgiving)
+        const anklesAboveHips = leftAnkle.y < leftHip.y + 0.15 || rightAnkle.y < rightHip.y + 0.15;
+        // Or at least ankles near shoulder level
+        const anklesNearShoulders = leftAnkle.y < leftShoulder.y + 0.35 || rightAnkle.y < rightShoulder.y + 0.35;
 
-        if (!anklesAboveShoulders) return 0;
+        if (!anklesAboveHips && !anklesNearShoulders) return 0;
 
-        const backSupport = leftElbow.y > leftShoulder.y - 0.1 || rightElbow.y > rightShoulder.y - 0.1;
+        // How vertical are the legs? (ankles above hips = good)
+        const legVerticality = Math.max(0,
+          Math.max(leftHip.y - leftAnkle.y, rightHip.y - rightAnkle.y)
+        );
+        const verticalScore = Math.min(1, legVerticality * 4);
 
-        let score = 70; // Highly forgiving base score
-        score += backSupport ? 30 : 0;
+        // Back support (elbows near or below shoulders)
+        const backSupport = leftElbow.y > leftShoulder.y - 0.15 || rightElbow.y > rightShoulder.y - 0.15;
 
-        return Math.min(100, score);
+        // Legs relatively straight
+        const leftLegAngle = angleBetween(leftHip, leftKnee, leftAnkle);
+        const rightLegAngle = angleBetween(rightHip, rightKnee, rightAnkle);
+        const legsStraight = (leftLegAngle + rightLegAngle) / 2 > 140;
+
+        let score = 50; // base for getting inverted
+        score += verticalScore * 20;
+        score += backSupport ? 15 : 0;
+        score += legsStraight ? 15 : 5;
+
+        return Math.min(100, Math.round(score));
       }
 
       // ── COBRA POSE ────────────────────────────────────────────────
       case "cobra": {
-        // Shoulders should be roughly above or equal to hips
-        const chestLifted = leftShoulder.y < leftHip.y + 0.15 || rightShoulder.y < rightHip.y + 0.15;
-        const armsPropping = leftElbow.y > leftShoulder.y - 0.1;
+        // Shoulders should be roughly above or near hips (very forgiving)
+        const chestLifted = leftShoulder.y < leftHip.y + 0.35 || rightShoulder.y < rightHip.y + 0.35;
 
         if (!chestLifted) return 0;
 
-        let score = 70; // Highly forgiving base score
-        score += armsPropping ? 30 : 0;
+        // How much is the chest lifted above hips
+        const liftAmount = Math.max(
+          leftHip.y - leftShoulder.y,
+          rightHip.y - rightShoulder.y
+        );
+        const liftScore = Math.max(0, Math.min(1, liftAmount * 4));
 
-        return Math.min(100, score);
+        // Arms propping (elbows near or below shoulders)
+        const armsPropping = leftElbow.y > leftShoulder.y - 0.15 || rightElbow.y > rightShoulder.y - 0.15;
+
+        // Hips should be on/near the ground (hips below or near knees)
+        const hipsLow = leftHip.y > leftKnee.y - 0.2 || rightHip.y > rightKnee.y - 0.2;
+
+        // Back arch: spine extension (shoulder-hip-ankle angle)
+        const spineAngleL = angleBetween(leftShoulder, leftHip, leftAnkle);
+        const spineAngleR = angleBetween(rightShoulder, rightHip, rightAnkle);
+        const avgSpineAngle = (spineAngleL + spineAngleR) / 2;
+        // Good cobra has a noticeable arch (angle < 160)
+        const archScore = Math.max(0, Math.min(1, (180 - avgSpineAngle) / 60));
+
+        let score = 45; // base for chest being lifted
+        score += liftScore * 20;
+        score += armsPropping ? 15 : 0;
+        score += hipsLow ? 5 : 0;
+        score += archScore * 15;
+
+        return Math.min(100, Math.round(score));
       }
 
       // ── DOWNDOG ───────────────────────────────────────────────────
-      // MUST: hips highest point (inverted V shape)
       case "downdog": {
-        const hipsUp =
-          leftHip.y < leftShoulder.y && rightHip.y < rightShoulder.y;
-        const handsDown =
-          leftWrist.y > leftShoulder.y && rightWrist.y > rightShoulder.y;
-        const feetDown = leftAnkle.y > leftHip.y && rightAnkle.y > rightHip.y;
+        // Hips should be the highest point (inverted V shape)
+        // Very forgiving: hips just need to be near or above shoulders
+        const avgHipY = (leftHip.y + rightHip.y) / 2;
+        const avgShoulderY = (leftShoulder.y + rightShoulder.y) / 2;
+        const avgAnkleY = (leftAnkle.y + rightAnkle.y) / 2;
+        const avgWristY = (leftWrist.y + rightWrist.y) / 2;
+
+        const hipsUp = avgHipY < avgShoulderY + 0.15;
+        const handsDown = avgWristY > avgShoulderY - 0.15;
+        const feetDown = avgAnkleY > avgHipY - 0.15;
 
         if (!hipsUp || !handsDown || !feetDown) return 0;
 
-        const hipHeight =
-          Math.abs(leftHip.y - leftShoulder.y) /
-          Math.max(0.05, Math.abs(leftHip.y - leftAnkle.y));
-        const shapeScore = Math.min(1, hipHeight);
+        // V-shape score: how high are hips relative to hands and feet
+        const hipElevation = Math.max(0,
+          ((avgShoulderY - avgHipY) + (avgAnkleY - avgHipY)) / 2
+        );
+        const vShapeScore = Math.min(1, hipElevation * 5);
 
-        let score = 40;
-        score += shapeScore * 60;
+        // Arm straightness
+        const leftArmAngle = angleBetween(leftShoulder, leftElbow, leftWrist);
+        const rightArmAngle = angleBetween(rightShoulder, rightElbow, rightWrist);
+        const armsStraight = (leftArmAngle + rightArmAngle) / 2 > 150;
 
-        return Math.min(100, score);
+        // Leg straightness
+        const leftLegAngle = angleBetween(leftHip, leftKnee, leftAnkle);
+        const rightLegAngle = angleBetween(rightHip, rightKnee, rightAnkle);
+        const legsStraight = (leftLegAngle + rightLegAngle) / 2 > 150;
+
+        let score = 45; // base for being in V shape
+        score += vShapeScore * 25;
+        score += armsStraight ? 15 : 5;
+        score += legsStraight ? 15 : 5;
+
+        return Math.min(100, Math.round(score));
       }
 
       default:
         return 0;
     }
-  };
+  };
