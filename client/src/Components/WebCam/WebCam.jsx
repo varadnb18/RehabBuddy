@@ -54,10 +54,16 @@ function WebCam() {
         await tf.ready();
 
         try {
-          console.log("Attempting to load TensorFlow model...");
-          tfModel.current = await tf.loadLayersModel(
-            "https://tejaskasture.github.io/pose-classification-model/model.json",
-          );
+          console.log("Attempting to load local TensorFlow model...");
+          try {
+            tfModel.current = await tf.loadLayersModel("/model/model.json");
+            console.log("Successfully loaded local model.");
+          } catch (localError) {
+            console.warn("Local model not found or incomplete. Falling back to external model URL...");
+            tfModel.current = await tf.loadLayersModel(
+              "https://tejaskasture.github.io/pose-classification-model/model.json"
+            );
+          }
 
           const outputShape = tfModel.current.outputs[0].shape;
           const numClasses = outputShape[outputShape.length - 1];
