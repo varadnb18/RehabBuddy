@@ -2,15 +2,15 @@ import os
 from flask import Blueprint, request, jsonify
 from google import genai
 import openai
-# Create a Blueprint (Controller) for chat routes
+
 chat_bp = Blueprint('chat', __name__)
 
-# Get API Keys
+
 API_KEYS = [
     os.environ.get("GEMINI_API_KEY"),
     os.environ.get("GEMINI_API_KEY_2")
 ]
-# Filter out None or empty values
+
 API_KEYS = [key for key in API_KEYS if key]
 
 if not API_KEYS:
@@ -40,7 +40,7 @@ def chat():
     is_initial = data.get("is_initial", False)
 
     try:
-        # Build the full conversation string to give context to the model
+
         conversation_context = ""
         for msg in history:
             role = "User" if msg.get("role") == "user" else "Assistant"
@@ -51,7 +51,7 @@ def chat():
         else:
             full_prompt = f"{SYSTEM_PROMPT}\n\nConversation history:\n{conversation_context}\n\nUser: {prompt}\n\nProvide a direct and helpful response to the user's question without repeating your introduction. If they ask about an exercise, provide detailed instructions and benefits."
         
-        # Try each API key in order as a fallback mechanism
+
         response_text = None
         last_error = None
         
@@ -63,13 +63,12 @@ def chat():
                     contents=full_prompt
                 )
                 response_text = response.text
-                break # Success! Break out of the loop
+                break 
             except Exception as e:
                 print(f"Gemini API Key failed. Trying next key if available. Error: {e}")
                 last_error = e
                 continue # Try the next key
                 
-        # If all Gemini keys fail, FALLBACK TO OPENAI
         if response_text is None:
             print("All Gemini keys exhausted. Falling back to OpenAI...")
             try:
@@ -89,7 +88,6 @@ def chat():
                 print(f"OpenAI Fallback also failed: {openai_err}")
                 last_error = f"Gemini Error: {last_error} | OpenAI Error: {openai_err}"
                 
-        # If OpenAI fails, FALLBACK TO GROQ
         if response_text is None:
             print("OpenAI exhausted. Falling back to Groq...")
             try:
