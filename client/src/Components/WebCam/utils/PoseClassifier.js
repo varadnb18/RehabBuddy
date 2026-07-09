@@ -86,12 +86,9 @@ export function calculatePoseAccuracy(
     modelConfidence = result.accuracy;
   }
 
-  // Use the HIGHER of the two scores as the primary signal,
-  // then blend in the lower score as a smaller boost.
-  // This prevents one low score from dragging down the other.
-  const highScore = Math.max(modelConfidence, geoScore);
-  const lowScore = Math.min(modelConfidence, geoScore);
-  const blendedAccuracy = Math.round(highScore * 0.75 + lowScore * 0.25);
+  // If either the Neural Network OR the Geometric Math is confident, trust the highest one.
+  // This prevents a confused Neural Network from dragging down perfect geometry.
+  const blendedAccuracy = Math.round(Math.max(modelConfidence, geoScore));
 
   const finalAccuracy = Math.max(0, Math.min(100, blendedAccuracy));
   const threshold = getThresholdForPose(targetPose);

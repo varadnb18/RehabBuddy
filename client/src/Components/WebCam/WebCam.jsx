@@ -18,6 +18,7 @@ function WebCam() {
   const { name } = useParams();
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+  const cameraRef = useRef(null);
   
   const [selectedPose, setSelectedPose] = useState(name);
   const [accuracy, setAccuracy] = useState(0);
@@ -149,7 +150,7 @@ function WebCam() {
         });
 
         if (videoRef.current) {
-          const camera = new Camera(videoRef.current, {
+          cameraRef.current = new Camera(videoRef.current, {
             onFrame: async () => {
               if (videoRef.current) {
                 await pose.send({ image: videoRef.current });
@@ -159,7 +160,7 @@ function WebCam() {
             height: 480,
           });
 
-          camera
+          cameraRef.current
             .start()
             .then(() => {
               setMessageStatus("Camera connected. Stand back to see your full body.");
@@ -179,10 +180,15 @@ function WebCam() {
 
     initMediaPipe();
 
+    const currentVideo = videoRef.current;
     return () => {
-      if (videoRef.current && videoRef.current.srcObject) {
-        const tracks = videoRef.current.srcObject.getTracks();
+      if (cameraRef.current) {
+        try { cameraRef.current.stop(); } catch (e) {}
+      }
+      if (currentVideo && currentVideo.srcObject) {
+        const tracks = currentVideo.srcObject.getTracks();
         tracks.forEach((track) => track.stop());
+        currentVideo.srcObject = null;
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
