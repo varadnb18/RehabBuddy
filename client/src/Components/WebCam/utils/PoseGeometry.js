@@ -37,19 +37,13 @@ export const geometricGate = (landmarks, targetPose) => {
     switch (targetPose) {
       // ── TREE POSE ──────────────────────────────────────────────────
       case "tree": {
-        // A raised foot will have a LOWER y value than the standing knee
-        const leftFootRaised = leftAnkle.y < rightKnee.y + 0.02;
-        const rightFootRaised = rightAnkle.y < leftKnee.y + 0.02;
+        // A raised foot will have a LOWER y value than the standing knee (made more forgiving)
+        const leftFootRaised = leftAnkle.y < rightKnee.y + 0.1;
+        const rightFootRaised = rightAnkle.y < leftKnee.y + 0.1;
 
         if (!leftFootRaised && !rightFootRaised) {
           return 0;
         }
-
-        // How high is the raised foot? Higher = better
-        const raisedHeight = leftFootRaised
-          ? (rightKnee.y - leftAnkle.y)
-          : (leftKnee.y - rightAnkle.y);
-        const heightScore = Math.max(0, Math.min(1, raisedHeight * 5));
 
         // Arms raised above shoulders
         const leftArmUp = leftWrist.y < leftShoulder.y;
@@ -57,19 +51,15 @@ export const geometricGate = (landmarks, targetPose) => {
         const armsUp = leftArmUp && rightArmUp;
         const oneArmUp = leftArmUp || rightArmUp;
 
-        // Balance: nose X close to hip midpoint
+        // Balance: highly forgiving (nose X close to hip midpoint)
         const midHipX = (leftHip.x + rightHip.x) / 2;
-        const balanceScore = Math.max(0, 1 - Math.abs(nose.x - midHipX) * 5);
+        const balanceScore = Math.max(0, 1 - Math.abs(nose.x - midHipX) * 2);
 
-        // Arms joined / close together overhead
-        const armsClose = Math.abs(leftWrist.x - rightWrist.x) < 0.3;
-
-        let score = 45; // base for having one foot up
-        score += heightScore * 15;
-        if (armsUp) score += 25;
+        let score = 55; // Generous base score for having one foot up
+        if (armsUp) score += 35;
         else if (oneArmUp) score += 15;
-        if (armsClose && armsUp) score += 5;
-        score += balanceScore * 10;
+        
+        score += balanceScore * 10; // Up to 10 points for balance
 
         return Math.min(100, Math.round(score));
       }

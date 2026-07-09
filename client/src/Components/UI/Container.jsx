@@ -28,14 +28,17 @@ function Container() {
           const tempName = chairItem.name;
           const tempImg = chairItem.img;
           const tempDesc = chairItem.description;
+          const tempPose = chairItem.pose;
           
           chairItem.name = treeItem.name;
           chairItem.img = treeItem.img;
           chairItem.description = treeItem.description;
+          chairItem.pose = treeItem.pose;
           
           treeItem.name = tempName;
           treeItem.img = tempImg;
           treeItem.description = tempDesc;
+          treeItem.pose = tempPose;
         }
 
         // Wait at least 3 seconds before displaying data
