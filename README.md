@@ -32,6 +32,22 @@ Our AI pipeline uses a hybrid **"Eyes + Brain"** approach to achieve high-perfor
 3. **The Geometric Gate:**
    To guarantee perfection, the raw AI prediction is passed through mathematical geometric gates (e.g., measuring the exact angle between your shoulder, hip, and knee) to ensure your form is physically correct before scoring.
 
+```mermaid
+graph TD
+    A[Webcam Feed] -->|60 FPS| B(Google MediaPipe)
+    B -->|33 3D Landmarks| C{Custom Keras Neural Network}
+    C -->|Pose Prediction| D[Geometric Math Gate]
+    D -->|Angle Validation| E((Final Accuracy Score))
+    E -->|UI Update| F[Skeleton Turns Green/Red]
+    
+    style A fill:#2D3748,stroke:#4A5568,color:#fff
+    style B fill:#00A67E,stroke:#00795A,color:#fff
+    style C fill:#FF6F00,stroke:#CC5800,color:#fff
+    style D fill:#3182CE,stroke:#2B6CB0,color:#fff
+    style E fill:#38A169,stroke:#2F855A,color:#fff
+    style F fill:#805AD5,stroke:#553C9A,color:#fff
+```
+
 ---
 
 ## 🚀 Features
