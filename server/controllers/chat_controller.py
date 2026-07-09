@@ -55,22 +55,27 @@ def chat():
         response_text = None
         last_error = None
         
-        for key in API_KEYS:
-            try:
-                client = genai.Client(api_key=key)
-                response = client.models.generate_content(
-                    model='gemini-2.0-flash-lite',
-                    contents=full_prompt
-                )
-                response_text = response.text
-                break 
-            except Exception as e:
-                print(f"Gemini API Key failed. Trying next key if available. Error: {e}")
-                last_error = e
-                continue # Try the next key
-                
+        # Priority 1: Groq (LPU - Fastest)
+        try:
+            groq_key = os.environ.get("GROQ_API_KEY")
+            if not groq_key:
+                raise Exception("Groq API key not configured in .env")
+            
+            from groq import Groq
+            groq_client = Groq(api_key=groq_key)
+            completion = groq_client.chat.completions.create(
+                model="llama-3.1-8b-instant",
+                messages=[
+                    {"role": "user", "content": full_prompt}
+                ]
+            )
+            response_text = completion.choices[0].message.content
+        except Exception as groq_err:
+            print(f"Groq failed: {groq_err}. Falling back to OpenAI...")
+            last_error = f"Groq Error: {groq_err}"
+
+        # Priority 2: OpenAI Fallback
         if response_text is None:
-            print("All Gemini keys exhausted. Falling back to OpenAI...")
             try:
                 openai_key = os.environ.get("OPENAI_API_KEY")
                 if not openai_key:
@@ -85,28 +90,27 @@ def chat():
                 )
                 response_text = completion.choices[0].message.content
             except Exception as openai_err:
-                print(f"OpenAI Fallback also failed: {openai_err}")
-                last_error = f"Gemini Error: {last_error} | OpenAI Error: {openai_err}"
+                print(f"OpenAI failed: {openai_err}. Falling back to Gemini...")
+                last_error = f"{last_error} | OpenAI Error: {openai_err}"
                 
+        # Priority 3: Gemini Fallback (Last Resort)
         if response_text is None:
-            print("OpenAI exhausted. Falling back to Groq...")
-            try:
-                groq_key = os.environ.get("GROQ_API_KEY")
-                if not groq_key:
-                    raise Exception("Groq API key not configured in .env")
-                
-                from groq import Groq
-                groq_client = Groq(api_key=groq_key)
-                completion = groq_client.chat.completions.create(
-                    model="llama-3.1-8b-instant",
-                    messages=[
-                        {"role": "user", "content": full_prompt}
-                    ]
-                )
-                response_text = completion.choices[0].message.content
-            except Exception as groq_err:
-                print(f"Groq Fallback also failed: {groq_err}")
-                raise Exception(f"{last_error} | Groq Error: {groq_err}")
+            for key in API_KEYS:
+                try:
+                    client = genai.Client(api_key=key)
+                    response = client.models.generate_content(
+                        model='gemini-2.0-flash-lite',
+                        contents=full_prompt
+                    )
+                    response_text = response.text
+                    break 
+                except Exception as gemini_err:
+                    print(f"Gemini API Key failed. Trying next key if available. Error: {gemini_err}")
+                    last_error = f"{last_error} | Gemini Error: {gemini_err}"
+                    continue # Try the next key
+                    
+            if response_text is None:
+                raise Exception(f"All AI Providers Exhausted. Error Trail: {last_error}")
             
         return jsonify({"response": response_text})
 
