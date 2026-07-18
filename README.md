@@ -1,6 +1,6 @@
 <div align="center">
   
-# 🧘‍♂️ InC (Techfiesta) - AI-Powered Yoga Instructor
+# 🧘‍♂️ RehabBuddy - AI-Powered Yoga Instructor
   
 **An intelligent, full-stack web application that uses Artificial Intelligence to analyze your yoga poses in real-time through your webcam.**
 
